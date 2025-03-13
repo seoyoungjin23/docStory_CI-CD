@@ -1,5 +1,6 @@
 package com.ky.docstory.controller;
 
+import com.ky.docstory.common.dto.DocStoryResponseBody;
 import com.ky.docstory.entity.User;
 import com.ky.docstory.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,8 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestParam String username) {
-        return userService.createUser(username);
+    public DocStoryResponseBody<User> createUser(@RequestParam String username) {
+        User user = userService.createUser(username);
+        return DocStoryResponseBody.success(user);
     }
 }
