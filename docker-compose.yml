@@ -1,0 +1,20 @@
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql_container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - "3306:3306"
+    networks:
+      - docStory_network
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+networks:
+  docStory_network:
+
+volumes:
+  mysql_data:

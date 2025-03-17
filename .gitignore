@@ -220,3 +220,4 @@ gradle-app.setting
 
 ### env ###
 src/main/resources/env.properties
+.env
