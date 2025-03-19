@@ -2,8 +2,8 @@ package com.ky.docstory.config;
 
 import com.ky.docstory.auth.CustomOAuth2UserService;
 import com.ky.docstory.auth.CustomSuccessHandler;
-import com.ky.docstory.auth.JWTFilter;
-import com.ky.docstory.auth.JWTUtil;
+import com.ky.docstory.jwt.JWTFilter;
+import com.ky.docstory.jwt.JWTUtil;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

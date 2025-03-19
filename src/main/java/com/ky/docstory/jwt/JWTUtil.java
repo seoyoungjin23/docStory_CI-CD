@@ -1,4 +1,4 @@
-package com.ky.docstory.auth;
+package com.ky.docstory.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

@@ -1,5 +1,6 @@
-package com.ky.docstory.auth;
+package com.ky.docstory.jwt;
 
+import com.ky.docstory.auth.CustomOAuth2User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
