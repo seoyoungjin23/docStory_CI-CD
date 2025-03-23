@@ -1,5 +1,6 @@
 package com.ky.docstory.jwt;
 
+import com.ky.docstory.auth.CustomOAuth2User;
 import com.ky.docstory.common.code.DocStoryResponseCode;
 import com.ky.docstory.common.exception.BusinessException;
 import jakarta.servlet.FilterChain;
@@ -40,7 +41,12 @@ public class JWTFilter extends OncePerRequestFilter {
 
             if (jwtUtil.validateToken(token)) {
                 String providerId = jwtUtil.getProviderIdFromToken(token);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(providerId, null, null);
+                String nickname = jwtUtil.getNicknameFromToken(token);
+                String profileImage = jwtUtil.getProfileImageFromToken(token);
+
+                CustomOAuth2User customUser = new CustomOAuth2User(null, providerId, nickname, profileImage);
+
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(customUser, null, null);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } else {
                 throw new BusinessException(DocStoryResponseCode.JWT_UNAUTHORIZED);

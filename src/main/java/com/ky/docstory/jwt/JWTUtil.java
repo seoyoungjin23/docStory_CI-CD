@@ -76,6 +76,14 @@ public class JWTUtil {
         return getClaimFromToken(token, "providerId");
     }
 
+    public String getNicknameFromToken(String token) {
+        return getClaimFromToken(token, "nickname");
+    }
+
+    public String getProfileImageFromToken(String token) {
+        return getClaimFromToken(token, "profileImage");
+    }
+
     private Claims getClaimsFromToken(String token) {
 
         return Jwts.parser()

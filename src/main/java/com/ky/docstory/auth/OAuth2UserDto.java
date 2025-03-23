@@ -16,6 +16,7 @@ public class OAuth2UserDto {
 
     private String providerId;
     private String nickname;
+    private String profileImage;
 
     public static OAuth2UserDto from(String registrationId, Map<String, Object> attributes) {
         if ("google".equals(registrationId)) {
@@ -31,6 +32,7 @@ public class OAuth2UserDto {
         return OAuth2UserDto.builder()
                 .providerId((String) attributes.get("sub"))
                 .nickname((String) attributes.get("name"))
+                .profileImage((String) attributes.get("picture"))
                 .build();
     }
 
@@ -40,6 +42,7 @@ public class OAuth2UserDto {
         return OAuth2UserDto.builder()
                 .providerId(attributes.get("id").toString())
                 .nickname((String) properties.get("nickname"))
+                .profileImage((String) properties.get("profile_image"))
                 .build();
     }
 }

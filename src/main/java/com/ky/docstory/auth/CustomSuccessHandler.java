@@ -28,9 +28,13 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
         String providerId = customOAuth2User.getName();
+        String nickname = customOAuth2User.getNickname();
+        String profileImage = customOAuth2User.getProfileImage();
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("providerId", providerId);
+        claims.put("nickname", nickname);
+        claims.put("profileImage", profileImage);
 
         String token = jwtUtil.createToken(claims);
         Cookie jwtCookie = jwtUtil.createJwtCookie(token);

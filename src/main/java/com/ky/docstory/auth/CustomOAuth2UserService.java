@@ -34,11 +34,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user = User.builder()
                     .providerId(userInfo.getProviderId())
                     .nickname(userInfo.getNickname())
+                    .profileImage(userInfo.getProfileImage())
                     .build();
 
             user = userRepository.save(user);
         }
 
-        return new CustomOAuth2User(oAuth2User, user.getProviderId());
+        return new CustomOAuth2User(oAuth2User, user.getProviderId(), user.getNickname(), user.getProfileImage());
     }
 }
