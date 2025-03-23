@@ -1,5 +1,7 @@
 package com.ky.docstory.auth;
 
+import com.ky.docstory.common.code.DocStoryResponseCode;
+import com.ky.docstory.common.exception.BusinessException;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +23,7 @@ public class OAuth2UserDto {
         } else if ("kakao".equals(registrationId)) {
             return fromKakao(attributes);
         } else {
-            throw new IllegalArgumentException("지원하지 않는 소셜 로그인 제공자: " + registrationId);
+            throw new BusinessException(DocStoryResponseCode.UNSUPPORTED_SOCIAL_PROVIDER);
         }
     }
 
