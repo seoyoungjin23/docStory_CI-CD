@@ -32,24 +32,10 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Map<String, Object> claims = new HashMap<>();
         claims.put("providerId", providerId);
 
-        long expiredTime = 60 * 60 * 60L;
-
-        String token = jwtUtil.createJwt(claims, expiredTime);
-
-        Cookie jwtCookie = createJwtCookie(token, expiredTime);
+        String token = jwtUtil.createToken(claims);
+        Cookie jwtCookie = jwtUtil.createJwtCookie(token);
 
         response.addCookie(jwtCookie);
         response.sendRedirect(redirectUri);
-    }
-
-    private Cookie createJwtCookie(String token, long expiredTime) {
-        Cookie cookie = new Cookie("Authorization", token);
-        cookie.setHttpOnly(true);
-        //cookie.setSecure(true);
-        cookie.setPath("/");
-        cookie.setMaxAge((int) expiredTime);
-        cookie.setAttribute("SameSite", "Lax");
-
-        return cookie;
     }
 }
