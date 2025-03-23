@@ -35,6 +35,10 @@ public class CustomOAuth2User implements OAuth2User {
         return Collections.emptyList();
     }
 
+    public String getProviderId() {
+        return providerId;
+    }
+
     public String getNickname() {
         return nickname;
     }
