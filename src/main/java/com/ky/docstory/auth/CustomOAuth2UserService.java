@@ -73,7 +73,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String dateDir = LocalDate.now().format(DateTimeFormatter.ofPattern("yy-MM-dd"));
         String saveFilename = UUID.randomUUID() + "." + fileType;
-        String filePath = "/profileImage/" + dateDir + "/" + saveFilename;
+        String filePath = "profileImage/" + dateDir + "/" + saveFilename;
 
         try (InputStream inputStream = url.openStream()) {
             s3Template.upload(bucketName, filePath, inputStream);
