@@ -58,8 +58,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .providerId(userInfo.getProviderId())
                     .nickname(userInfo.getNickname())
                     .profilePath(profileImage.getFilePath())
-                    .profileType(profileImage.getFileType())
-                    .profileSaveFileName(profileImage.getSaveFilename())
+                    .profileFileName(profileImage.getSaveFilename())
                     .build();
 
             user = userRepository.save(user);
@@ -74,12 +73,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String dateDir = LocalDate.now().format(DateTimeFormatter.ofPattern("yy-MM-dd"));
         String saveFilename = UUID.randomUUID() + "." + fileType;
-        String filePath = "profileImage/" + dateDir + "/" + saveFilename;
+        String filePath = "/profileImage/" + dateDir + "/" + saveFilename;
 
         try (InputStream inputStream = url.openStream()) {
             s3Template.upload(bucketName, filePath, inputStream);
         }
 
-        return new ProfileImage(filePath, fileType, saveFilename);
+        return new ProfileImage(filePath, saveFilename);
     }
 }

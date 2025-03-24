@@ -9,6 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProfileImage {
     private String filePath;
-    private String fileType;
     private String saveFilename;
 }

@@ -30,7 +30,5 @@ public class User {
 
     private String profilePath;
 
-    private String profileType;
-
-    private String profileSaveFileName;
+    private String profileFileName;
 }
