@@ -21,7 +21,15 @@ public enum DocStoryResponseCode {
     DATABASE_ERROR(1003, "데이터베이스 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     REGISTRATION_FAILED(1004, "데이터 등록에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
     FILE_UPLOAD_FAILED(1005, "파일 업로드에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-    PARAMETER_ERROR(1006, "파라미터가 올바르지 않습니다.", HttpStatus.BAD_REQUEST);
+    PARAMETER_ERROR(1006, "파라미터가 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
+    JWT_EXPIRED(1007, "만료된 토큰입니다.", HttpStatus.UNAUTHORIZED),
+    JWT_MALFORMED(1008, "유효하지 않은 토큰 형식입니다.", HttpStatus.UNAUTHORIZED),
+    JWT_BADSIGN(1009, "토큰 서명 검증 실패", HttpStatus.UNAUTHORIZED),
+    JWT_UNSUPPORTED(1010, "지원되지 않는 토큰입니다.", HttpStatus.UNAUTHORIZED),
+    JWT_DECODING(1011, "토큰 디코딩 오류입니다.", HttpStatus.UNAUTHORIZED),
+    JWT_ILLEGAL(1012, "토큰이 비어있거나 올바르지 않습니다.", HttpStatus.UNAUTHORIZED),
+    JWT_UNAUTHORIZED(1013, "토큰 검증 중 오류가 발생했습니다.", HttpStatus.UNAUTHORIZED),
+    UNSUPPORTED_SOCIAL_PROVIDER(1014, "지원하지 않는 소셜 로그인 제공자입니다.", HttpStatus.BAD_REQUEST);
 
     private final int code;
     private final String message;
