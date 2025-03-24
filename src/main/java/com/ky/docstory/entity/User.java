@@ -28,6 +28,9 @@ public class User {
 
     private String nickname;
 
-    private String profileImage;
+    private String profilePath;
 
+    private String profileType;
+
+    private String profileSaveFileName;
 }
