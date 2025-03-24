@@ -2,28 +2,17 @@ package com.ky.docstory.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
-public class File {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Table(name = "file")
+public class File extends BaseEntity {
 
     @Column(nullable = false)
     private String originFilename;
@@ -36,12 +25,4 @@ public class File {
 
     @Column(nullable = false)
     private String fileType;
-
-    @Column(nullable = false, updatable = false)
-    private String createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDate.now().format(DateTimeFormatter.ofPattern("yy-MM-dd"));
-    }
 }
