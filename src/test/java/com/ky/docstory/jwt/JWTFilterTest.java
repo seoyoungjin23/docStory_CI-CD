@@ -8,11 +8,14 @@ import static org.mockito.Mockito.when;
 
 import com.ky.docstory.common.code.DocStoryResponseCode;
 import com.ky.docstory.common.exception.BusinessException;
+import com.ky.docstory.entity.User;
+import com.ky.docstory.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -29,12 +32,15 @@ public class JWTFilterTest {
     private HttpServletResponse response;
     @Mock
     private FilterChain filterChain;
+    @Mock
+    private UserRepository userRepository;
+
     private JWTFilter jwtFilter;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.openMocks(this);
-        jwtFilter = new JWTFilter(jwtUtil);
+        jwtFilter = new JWTFilter(jwtUtil, userRepository);
     }
 
     @Test
@@ -68,6 +74,9 @@ public class JWTFilterTest {
         when(request.getHeader(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer validtoken");
         when(jwtUtil.validateToken("validtoken")).thenReturn(true);
         when(jwtUtil.getProviderIdFromToken("validtoken")).thenReturn("provider123");
+
+        User dummyUser = org.mockito.Mockito.mock(User.class);
+        when(userRepository.findByProviderId("provider123")).thenReturn(Optional.of(dummyUser));
 
         jwtFilter.doFilterInternal(request, response, filterChain);
         verify(filterChain).doFilter(request, response);

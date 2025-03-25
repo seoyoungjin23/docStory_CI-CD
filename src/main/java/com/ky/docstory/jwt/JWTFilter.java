@@ -1,8 +1,9 @@
 package com.ky.docstory.jwt;
 
-import com.ky.docstory.auth.CustomOAuth2User;
 import com.ky.docstory.common.code.DocStoryResponseCode;
 import com.ky.docstory.common.exception.BusinessException;
+import com.ky.docstory.entity.User;
+import com.ky.docstory.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,9 +17,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
-
-    public JWTFilter(JWTUtil jwtUtil) {
+    private final UserRepository userRepository;
+    public JWTFilter(JWTUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -41,12 +43,10 @@ public class JWTFilter extends OncePerRequestFilter {
 
             if (jwtUtil.validateToken(token)) {
                 String providerId = jwtUtil.getProviderIdFromToken(token);
-                String nickname = jwtUtil.getNicknameFromToken(token);
-                String profileImage = jwtUtil.getProfileImageFromToken(token);
+                User user = userRepository.findByProviderId(providerId)
+                        .orElseThrow(() -> new BusinessException(DocStoryResponseCode.USER_NOT_FOUND));
 
-                CustomOAuth2User customUser = new CustomOAuth2User(null, providerId, nickname, profileImage);
-
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(customUser, null, null);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, null);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } else {
                 throw new BusinessException(DocStoryResponseCode.JWT_UNAUTHORIZED);

@@ -29,7 +29,8 @@ public enum DocStoryResponseCode {
     JWT_DECODING(1011, "토큰 디코딩 오류입니다.", HttpStatus.UNAUTHORIZED),
     JWT_ILLEGAL(1012, "토큰이 비어있거나 올바르지 않습니다.", HttpStatus.UNAUTHORIZED),
     JWT_UNAUTHORIZED(1013, "토큰 검증 중 오류가 발생했습니다.", HttpStatus.UNAUTHORIZED),
-    UNSUPPORTED_SOCIAL_PROVIDER(1014, "지원하지 않는 소셜 로그인 제공자입니다.", HttpStatus.BAD_REQUEST);
+    UNSUPPORTED_SOCIAL_PROVIDER(1014, "지원하지 않는 소셜 로그인 제공자입니다.", HttpStatus.BAD_REQUEST),
+    USER_NOT_FOUND(1015, "해당 유저를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
 
     private final int code;
     private final String message;
