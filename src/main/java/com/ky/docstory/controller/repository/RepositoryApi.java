@@ -5,7 +5,10 @@ import com.ky.docstory.common.dto.DocStoryResponseBody;
 import com.ky.docstory.dto.repository.RepositoryCreateRequest;
 import com.ky.docstory.dto.repository.RepositoryResponse;
 import com.ky.docstory.entity.User;
+import com.ky.docstory.swagger.BadRequestErrorResponseWrapper;
+import com.ky.docstory.swagger.InternalServerErrorResponseWrapper;
 import com.ky.docstory.swagger.RepositoryCreateResponseWrapper;
+import com.ky.docstory.swagger.UnauthorizedErrorResponseWrapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,9 +28,13 @@ public interface RepositoryApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "레포지토리가 성공적으로 생성되었습니다.",
                     content = @Content(schema = @Schema(implementation = RepositoryCreateResponseWrapper.class))),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.", content = @Content),
-            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자입니다.", content = @Content),
-            @ApiResponse(responseCode = "500", description = "서버 내부 오류가 발생했습니다.", content = @Content)
+            @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.",
+                    content = @Content(schema = @Schema(implementation = BadRequestErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자입니다.",
+                    content = @Content(schema = @Schema(implementation = UnauthorizedErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류가 발생했습니다.",
+                    content = @Content(schema = @Schema(implementation = InternalServerErrorResponseWrapper.class))),
+
     })
     ResponseEntity<DocStoryResponseBody<RepositoryResponse>> createRepository(
             @Parameter(hidden = true) @CurrentUser User currentUser,
