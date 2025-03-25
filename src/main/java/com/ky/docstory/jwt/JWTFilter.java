@@ -29,7 +29,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         String requestURI = request.getRequestURI();
 
-        if (requestURI.equals("/login") || requestURI.equals("/default-ui.css") || requestURI.equals("/favicon.ico") || requestURI.equals("/swagger")) {
+        if (requestURI.equals("/login") || requestURI.equals("/default-ui.css") || requestURI.equals("/favicon.ico") || requestURI.equals("/swagger") || requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs")) {
             filterChain.doFilter(request, response);
             return;
         }
