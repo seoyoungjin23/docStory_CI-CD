@@ -6,8 +6,10 @@ import com.ky.docstory.dto.repository.RepositoryCreateRequest;
 import com.ky.docstory.dto.repository.RepositoryResponse;
 import com.ky.docstory.entity.User;
 import com.ky.docstory.service.repository.RepositoryService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -18,7 +20,8 @@ public class RepositoryController implements RepositoryApi {
 
     @Override
     public ResponseEntity<DocStoryResponseBody<RepositoryResponse>> createRepository(
-            @CurrentUser User currentUser, RepositoryCreateRequest request) {
+            @CurrentUser User currentUser,
+            @RequestBody @Valid RepositoryCreateRequest request) {
         RepositoryResponse response = repositoryService.createRepository(request, currentUser);
         return ResponseEntity.ok(DocStoryResponseBody.success(response));
     }
