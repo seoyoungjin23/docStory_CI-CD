@@ -1,5 +1,6 @@
 package com.ky.docstory.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ky.docstory.common.code.DocStoryResponseCode;
 import com.ky.docstory.common.exception.BusinessException;
 import com.ky.docstory.entity.User;
@@ -9,6 +10,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +21,8 @@ public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
     private final UserRepository userRepository;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     public JWTFilter(JWTUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
@@ -51,11 +56,12 @@ public class JWTFilter extends OncePerRequestFilter {
             } else {
                 throw new BusinessException(DocStoryResponseCode.JWT_UNAUTHORIZED);
             }
-
-        } catch (BusinessException businessException) {
-            throw businessException;
+        } catch (BusinessException be) {
+            jsonErrorResponse(response, be.getErrorCode());
+            return;
         } catch (Exception e) {
-            throw new BusinessException(DocStoryResponseCode.INTERNAL_SERVER_ERROR);
+            jsonErrorResponse(response, DocStoryResponseCode.INTERNAL_SERVER_ERROR);
+            return;
         }
 
         filterChain.doFilter(request, response);
@@ -68,5 +74,20 @@ public class JWTFilter extends OncePerRequestFilter {
             return authorization.substring(7);
         }
         return null;
+    }
+
+
+    private void jsonErrorResponse(HttpServletResponse response, DocStoryResponseCode errorCode)
+            throws IOException {
+        response.setStatus(errorCode.getHttpStatus().value());
+        response.setContentType("application/json;charset=UTF-8");
+
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("code", errorCode.getCode());
+        responseMap.put("message", errorCode.getMessage());
+        responseMap.put("data", null);
+
+        String jsonResponse = objectMapper.writeValueAsString(responseMap);
+        response.getWriter().write(jsonResponse);
     }
 }
