@@ -1,5 +1,7 @@
 package com.ky.docstory.entity;
 
+import com.ky.docstory.common.code.DocStoryResponseCode;
+import com.ky.docstory.common.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,5 +36,19 @@ public class TeamInvite extends BaseEntity {
         PENDING,
         ACCEPTED,
         REJECTED
+    }
+
+    public void accept() {
+        if (this.status != Status.PENDING) {
+            throw new BusinessException(DocStoryResponseCode.ALREADY_HANDLED);
+        }
+        this.status = Status.ACCEPTED;
+    }
+
+    public void reject() {
+        if (this.status != Status.PENDING) {
+            throw new BusinessException(DocStoryResponseCode.ALREADY_HANDLED);
+        }
+        this.status = Status.REJECTED;
     }
 }

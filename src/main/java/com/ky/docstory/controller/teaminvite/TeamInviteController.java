@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 public class TeamInviteController implements TeamInviteApi {
@@ -23,4 +25,17 @@ public class TeamInviteController implements TeamInviteApi {
         TeamInviteResponse response = teamInviteService.inviteUserToRepository(request, currentUser);
         return ResponseEntity.ok(DocStoryResponseBody.success(response));
     }
+
+    @Override
+    public ResponseEntity<DocStoryResponseBody<TeamInviteResponse>> acceptInvite(User currentUser, UUID inviteId) {
+        TeamInviteResponse response = teamInviteService.acceptInvite(inviteId, currentUser);
+        return ResponseEntity.ok(DocStoryResponseBody.success(response));
+    }
+
+    @Override
+    public ResponseEntity<DocStoryResponseBody<TeamInviteResponse>> rejectInvite(User currentUser, UUID inviteId) {
+        TeamInviteResponse response = teamInviteService.rejectInvite(inviteId, currentUser);
+        return ResponseEntity.ok(DocStoryResponseBody.success(response));
+    }
+
 }

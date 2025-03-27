@@ -17,6 +17,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @Tag(name = "TeamInvite", description = "팀 초대 관련 API")
 @RequestMapping("/api/team-invites")
 public interface TeamInviteApi {
@@ -42,4 +44,41 @@ public interface TeamInviteApi {
     ResponseEntity<DocStoryResponseBody<TeamInviteResponse>> inviteUser(
             @Parameter(hidden = true) @CurrentUser User currentUser,
             @RequestBody @Valid TeamInviteRequest request);
+
+    @Operation(summary = "초대 수락", description = "사용자가 받은 초대를 수락합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "초대 수락 완료",
+                    content = @Content(schema = @Schema(implementation = TeamInviteResponseWrapper.class))),
+            @ApiResponse(responseCode = "403", description = "초대받은 사용자가 아닙니다.",
+                    content = @Content(schema = @Schema(implementation = ForbiddenErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "404", description = "초대를 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = NotFoundErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "409", description = "이미 수락/거절된 초대입니다.",
+                    content = @Content(schema = @Schema(implementation = AlreadyHandledErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류",
+                    content = @Content(schema = @Schema(implementation = InternalServerErrorResponseWrapper.class)))
+    })
+    @PostMapping("/{inviteId}/accept")
+    ResponseEntity<DocStoryResponseBody<TeamInviteResponse>> acceptInvite(
+            @Parameter(hidden = true) @CurrentUser User currentUser,
+            @PathVariable UUID inviteId);
+
+    @Operation(summary = "초대 거절", description = "사용자가 받은 초대를 거절합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "초대 거절 완료",
+                    content = @Content(schema = @Schema(implementation = TeamInviteResponseWrapper.class))),
+            @ApiResponse(responseCode = "403", description = "초대받은 사용자가 아닙니다.",
+                    content = @Content(schema = @Schema(implementation = ForbiddenErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "404", description = "초대를 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = NotFoundErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "409", description = "이미 수락/거절된 초대입니다.",
+                    content = @Content(schema = @Schema(implementation = AlreadyHandledErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류",
+                    content = @Content(schema = @Schema(implementation = InternalServerErrorResponseWrapper.class)))
+    })
+    @PostMapping("/{inviteId}/reject")
+    ResponseEntity<DocStoryResponseBody<TeamInviteResponse>> rejectInvite(
+            @Parameter(hidden = true) @CurrentUser User currentUser,
+            @PathVariable UUID inviteId);
+
 }
