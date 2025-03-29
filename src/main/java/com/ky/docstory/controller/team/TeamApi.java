@@ -2,6 +2,8 @@ package com.ky.docstory.controller.team;
 
 import com.ky.docstory.auth.CurrentUser;
 import com.ky.docstory.common.dto.DocStoryResponseBody;
+import com.ky.docstory.dto.team.RoleUpdateRequest;
+import com.ky.docstory.dto.team.RoleUpdateResponse;
 import com.ky.docstory.dto.team.TeamMemberResponse;
 import com.ky.docstory.entity.User;
 import com.ky.docstory.swagger.*;
@@ -12,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,4 +41,24 @@ public interface TeamApi {
             @Parameter(hidden = true) @CurrentUser User currentUser,
             @PathVariable UUID repositoryId
     );
+
+    @PutMapping("/{repositoryId}/team-members/{memberId}/role")
+    @Operation(summary = "팀원 권한 변경", description = "ADMIN이 팀원의 권한을 REVIEWER 또는 CONTRIBUTOR로 변경합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "권한 변경 성공",
+                    content = @Content(schema = @Schema(implementation = RoleUpdateResponseWrapper.class))),
+            @ApiResponse(responseCode = "403", description = "접근 권한 없음 (ADMIN만 가능 또는 자기 자신 권한 변경 시)",
+                    content = @Content(schema = @Schema(implementation = ForbiddenErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "404", description = "레포지토리 또는 팀원을 찾을 수 없음",
+                    content = @Content(schema = @Schema(implementation = NotFoundErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류",
+                    content = @Content(schema = @Schema(implementation = InternalServerErrorResponseWrapper.class)))
+    })
+    ResponseEntity<DocStoryResponseBody<RoleUpdateResponse>> updateTeamMemberRole(
+            @Parameter(hidden = true) @CurrentUser User currentUser,
+            @PathVariable UUID repositoryId,
+            @PathVariable UUID memberId,
+            @RequestBody @Valid RoleUpdateRequest request
+    );
+
 }
