@@ -10,5 +10,9 @@ import java.util.UUID;
 
 public interface TeamService {
     List<TeamMemberResponse> getTeamMembers(UUID repositoryId, User currentUser);
+
     RoleUpdateResponse updateTeamMemberRole(UUID repositoryId, UUID memberId, User currentUser, Team.Role newRole);
+
+    void removeTeamMember(UUID repositoryId, UUID memberId, User currentUser);
+
 }

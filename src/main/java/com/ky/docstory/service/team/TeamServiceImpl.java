@@ -63,4 +63,27 @@ public class TeamServiceImpl implements TeamService {
         return RoleUpdateResponse.from(targetTeam);
     }
 
+    @Override
+    @Transactional
+    public void removeTeamMember(UUID repositoryId, UUID memberId, User currentUser) {
+        Repository repository = repositoryRepository.findById(repositoryId)
+                .orElseThrow(() -> new BusinessException(DocStoryResponseCode.NOT_FOUND));
+
+        Team currentTeam = teamRepository.findByRepositoryAndUser(repository, currentUser)
+                .orElseThrow(() -> new BusinessException(DocStoryResponseCode.FORBIDDEN));
+
+        if (currentTeam.getRole() != Team.Role.ADMIN) {
+            throw new BusinessException(DocStoryResponseCode.FORBIDDEN);
+        }
+
+        if (currentUser.getId().equals(memberId)) {
+            throw new BusinessException(DocStoryResponseCode.FORBIDDEN); // 자기 자신 추방 금지
+        }
+
+        Team targetTeam = teamRepository.findByRepositoryAndUserId(repository, memberId)
+                .orElseThrow(() -> new BusinessException(DocStoryResponseCode.NOT_FOUND));
+
+        teamRepository.delete(targetTeam);
+    }
+    
 }

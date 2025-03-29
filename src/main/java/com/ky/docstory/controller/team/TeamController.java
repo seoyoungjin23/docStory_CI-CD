@@ -33,4 +33,10 @@ public class TeamController implements TeamApi {
         return ResponseEntity.ok(DocStoryResponseBody.success(response));
     }
 
+    @Override
+    public ResponseEntity<DocStoryResponseBody<Void>> removeTeamMember(User currentUser, UUID repositoryId, UUID memberId) {
+        teamService.removeTeamMember(repositoryId, memberId, currentUser);
+        return ResponseEntity.ok(DocStoryResponseBody.success(null));
+    }
+
 }

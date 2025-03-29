@@ -61,4 +61,22 @@ public interface TeamApi {
             @RequestBody @Valid RoleUpdateRequest request
     );
 
+    @Operation(summary = "팀원 추방", description = "ADMIN이 팀원 한 명을 팀에서 추방합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "팀원 추방 성공",
+                    content = @Content(schema = @Schema(implementation = SuccessEmptyResponseWrapper.class))),
+    @ApiResponse(responseCode = "403", description = "접근 권한 없음 (ADMIN만 가능 또는 자기 자신 추방 불가)",
+                    content = @Content(schema = @Schema(implementation = ForbiddenErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "404", description = "레포지토리 또는 팀원을 찾을 수 없음",
+                    content = @Content(schema = @Schema(implementation = NotFoundErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류",
+                    content = @Content(schema = @Schema(implementation = InternalServerErrorResponseWrapper.class)))
+    })
+    @DeleteMapping("/{repositoryId}/team-members/{memberId}")
+    ResponseEntity<DocStoryResponseBody<Void>> removeTeamMember(
+            @Parameter(hidden = true) @CurrentUser User currentUser,
+            @PathVariable UUID repositoryId,
+            @PathVariable UUID memberId
+    );
+
 }
