@@ -20,4 +20,14 @@ public class User extends BaseEntity {
     private String profilePath;
 
     private String profileFileName;
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateProfile(String filePath, String fileName) {
+        this.profilePath = filePath;
+        this.profileFileName = fileName;
+    }
+
 }

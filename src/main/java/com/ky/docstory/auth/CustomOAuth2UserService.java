@@ -2,7 +2,7 @@ package com.ky.docstory.auth;
 
 import com.ky.docstory.common.code.DocStoryResponseCode;
 import com.ky.docstory.common.exception.BusinessException;
-import com.ky.docstory.dto.ProfileImage;
+import com.ky.docstory.dto.user.ProfileImage;
 import com.ky.docstory.entity.User;
 import com.ky.docstory.repository.UserRepository;
 import io.awspring.cloud.s3.S3Template;

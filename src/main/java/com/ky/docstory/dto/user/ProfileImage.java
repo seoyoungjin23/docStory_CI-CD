@@ -1,4 +1,4 @@
-package com.ky.docstory.dto;
+package com.ky.docstory.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
