@@ -1,5 +1,6 @@
 package com.ky.docstory.service.repository;
 
+import com.ky.docstory.dto.repository.MyRepositoryResponse;
 import com.ky.docstory.dto.repository.RepositoryCreateRequest;
 import com.ky.docstory.dto.repository.RepositoryResponse;
 import com.ky.docstory.entity.Repository;
@@ -10,6 +11,8 @@ import com.ky.docstory.repository.RepositoryRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -39,4 +42,14 @@ public class RepositoryServiceImpl implements RepositoryService {
 
         return RepositoryResponse.from(repository);
     }
+
+    @Override
+    @Transactional
+    public List<MyRepositoryResponse> getMyRepositories(User currentUser) {
+        List<Team> myTeams = teamRepository.findAllByUserWithRepository(currentUser);
+        return myTeams.stream()
+                .map(MyRepositoryResponse::from)
+                .toList();
+    }
+
 }
