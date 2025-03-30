@@ -10,4 +10,5 @@ public interface FileService {
 
     FileUploadResponse uploadFile(MultipartFile file, UUID repositoryId, UUID parentFileId, User currentUser);
     FileDownloadResponse downloadFile(UUID fileId);
+    User uploadProfileImage(String imageUrl, String providerId, String nickname);
 }

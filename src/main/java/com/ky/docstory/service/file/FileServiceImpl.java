@@ -10,9 +10,11 @@ import com.ky.docstory.entity.Repository;
 import com.ky.docstory.entity.User;
 import com.ky.docstory.repository.FileRepository;
 import com.ky.docstory.repository.RepositoryRepository;
+import com.ky.docstory.repository.UserRepository;
 import io.awspring.cloud.s3.S3Template;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -30,6 +32,7 @@ public class FileServiceImpl implements FileService{
     private final S3Template s3Template;
     private final FileRepository fileRepository;
     private final RepositoryRepository repositoryRepository;
+    private final UserRepository userRepository;
 
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucketName;
@@ -83,10 +86,36 @@ public class FileServiceImpl implements FileService{
         }
     }
 
+    @Override
+    @Transactional
+    public User uploadProfileImage(String imageUrl, String providerId, String nickname) {
+        String fileType = "jpeg";
+
+        String dateDir = LocalDate.now().format(DateTimeFormatter.ofPattern("yy-MM-dd"));
+        String saveFilename = UUID.randomUUID() + "." + fileType;
+        String filePath = String.format("profileImage/%s/%s", dateDir, saveFilename);
+
+        // S3에 파일 원본 저장
+        try (InputStream inputStream = new URL(imageUrl).openStream()) {
+            s3Template.upload(bucketName, filePath, inputStream);
+        } catch (IOException e) {
+            throw new BusinessException(DocStoryResponseCode.FILE_UPLOAD_FAILED);
+        }
+
+        User newUser = User.builder()
+                .providerId(providerId)
+                .nickname(nickname)
+                .profilePath(filePath)
+                .profileFileName(saveFilename)
+                .build();
+
+        return userRepository.save(newUser);
+    }
+
     private FileInfo createFileInfo(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
 
-        if (originalFilename == null || !originalFilename.contains(".")) {
+        if (!originalFilename.contains(".")) {
             throw new BusinessException(DocStoryResponseCode.PARAMETER_ERROR);
         }
 
