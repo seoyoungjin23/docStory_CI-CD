@@ -41,6 +41,6 @@ public class File extends BaseEntity {
     private FileType fileType;
 
     public enum FileType {
-        HWP, DOCX, PDF
+        HWP, DOCX, PDF, HWPX
     }
 }
