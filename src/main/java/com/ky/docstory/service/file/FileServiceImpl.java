@@ -2,6 +2,7 @@ package com.ky.docstory.service.file;
 
 import com.ky.docstory.common.code.DocStoryResponseCode;
 import com.ky.docstory.common.exception.BusinessException;
+import com.ky.docstory.dto.file.FileCategory;
 import com.ky.docstory.dto.file.FileDownloadResponse;
 import com.ky.docstory.dto.file.FileInfo;
 import com.ky.docstory.dto.file.FileUploadResponse;
@@ -17,8 +18,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -29,10 +32,13 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class FileServiceImpl implements FileService{
 
+    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024;
+
     private final S3Template s3Template;
     private final FileRepository fileRepository;
     private final RepositoryRepository repositoryRepository;
     private final UserRepository userRepository;
+    private final Tika tika = new Tika();
 
     @Value("${spring.cloud.aws.s3.bucket}")
     private String bucketName;
@@ -40,6 +46,8 @@ public class FileServiceImpl implements FileService{
     @Override
     @Transactional
     public FileUploadResponse uploadFile(MultipartFile file, UUID repositoryId, UUID parentFileId, User currentUser) {
+        validateFile(file, FileCategory.DOCUMENT);
+
         Repository repository = repositoryRepository.findById(repositoryId)
                 .orElseThrow(() -> new BusinessException(DocStoryResponseCode.NOT_FOUND));
 
@@ -115,19 +123,11 @@ public class FileServiceImpl implements FileService{
     private FileInfo createFileInfo(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
 
-        if (!originalFilename.contains(".")) {
-            throw new BusinessException(DocStoryResponseCode.PARAMETER_ERROR);
-        }
-
         int idx = originalFilename.lastIndexOf(".");
         String extension = originalFilename.substring(idx + 1).toUpperCase();
 
         File.FileType fileType;
-        try {
-            fileType = File.FileType.valueOf(extension);
-        } catch (IllegalArgumentException e) {
-            throw new BusinessException(DocStoryResponseCode.PARAMETER_ERROR);
-        }
+        fileType = File.FileType.valueOf(extension);
 
         String dateDir = LocalDate.now().format(DateTimeFormatter.ofPattern("yy-MM-dd"));
         String saveFilename = UUID.randomUUID().toString();
@@ -144,4 +144,43 @@ public class FileServiceImpl implements FileService{
         }
     }
 
+    private void validateFile(MultipartFile file, FileCategory category) {
+        if (file.getSize() > MAX_FILE_SIZE) {
+            throw new BusinessException(DocStoryResponseCode.INVALID_FILE);
+        }
+
+        String originalFilename = file.getOriginalFilename();
+        if (!originalFilename.contains(".")) {
+            throw new BusinessException(DocStoryResponseCode.INVALID_FILE);
+        }
+
+        if (originalFilename.contains("..") || originalFilename.contains("/") || originalFilename.contains("\\")) {
+            throw new BusinessException(DocStoryResponseCode.INVALID_FILE);
+        }
+
+        String extension = originalFilename.substring(originalFilename.lastIndexOf('.') + 1).toUpperCase();
+
+        Map<String, String> allowedTypes = category.getAllowedTypes();
+
+        if (!allowedTypes.containsKey(extension)) {
+            throw new BusinessException(DocStoryResponseCode.INVALID_FILE);
+        }
+
+        String tikaMime;
+        try {
+            tikaMime = tika.detect(file.getInputStream());
+        } catch (IOException e) {
+            throw new BusinessException(DocStoryResponseCode.INVALID_FILE);
+        }
+
+        String expectedMime = allowedTypes.get(extension);
+
+        boolean isValidMime = tikaMime.equals(expectedMime)
+                || (extension.equals("DOCX") && tikaMime.equals("application/x-tika-ooxml"))
+                || ((extension.equals("HWP") || extension.equals("HWPX")) && tikaMime.equals("application/zip"));
+
+        if (!isValidMime) {
+            throw new BusinessException(DocStoryResponseCode.INVALID_FILE);
+        }
+    }
 }
