@@ -88,7 +88,7 @@ public class FileServiceImpl implements FileService{
 
         try {
             byte[] fileData = getFileFromS3(file.getFilepath());
-            return new FileDownloadResponse(file.getOriginFilename(), file.getFileType(), fileData);
+            return new FileDownloadResponse(file.getOriginFilename(), fileData);
         } catch (IOException e) {
             throw new BusinessException(DocStoryResponseCode.FILE_DOWNLOAD_FAILED);
         }
