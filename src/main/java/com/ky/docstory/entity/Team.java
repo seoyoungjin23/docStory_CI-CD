@@ -29,4 +29,9 @@ public class Team extends BaseEntity {
         REVIEWER,
         CONTRIBUTOR
     }
+
+    public void changeRole(Role newRole) {
+        this.role = newRole;
+    }
+
 }
