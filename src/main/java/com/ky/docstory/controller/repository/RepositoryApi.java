@@ -2,13 +2,11 @@ package com.ky.docstory.controller.repository;
 
 import com.ky.docstory.auth.CurrentUser;
 import com.ky.docstory.common.dto.DocStoryResponseBody;
+import com.ky.docstory.dto.repository.MyRepositoryResponse;
 import com.ky.docstory.dto.repository.RepositoryCreateRequest;
 import com.ky.docstory.dto.repository.RepositoryResponse;
 import com.ky.docstory.entity.User;
-import com.ky.docstory.swagger.BadRequestErrorResponseWrapper;
-import com.ky.docstory.swagger.InternalServerErrorResponseWrapper;
-import com.ky.docstory.swagger.RepositoryCreateResponseWrapper;
-import com.ky.docstory.swagger.UnauthorizedErrorResponseWrapper;
+import com.ky.docstory.swagger.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,6 +17,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "Repository", description = "레포지토리 관련 API")
 @RequestMapping("/api/repositories")
@@ -41,4 +41,18 @@ public interface RepositoryApi {
             @Parameter(hidden = true)
             @CurrentUser User currentUser,
             @RequestBody @Valid RepositoryCreateRequest request);
+
+    @Operation(summary = "내가 속한 레포지토리 목록 조회", description = "현재 로그인한 사용자가 속한 모든 레포지토리 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "레포지토리 목록 조회 성공",
+                    content = @Content(schema = @Schema(implementation = MyRepositoryListResponseWrapper.class))),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자입니다.",
+                    content = @Content(schema = @Schema(implementation = UnauthorizedErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류가 발생했습니다.",
+                    content = @Content(schema = @Schema(implementation = InternalServerErrorResponseWrapper.class)))
+    })
+    @GetMapping("/my")
+    ResponseEntity<DocStoryResponseBody<List<MyRepositoryResponse>>> getMyRepositories(
+            @Parameter(hidden = true) @CurrentUser User currentUser);
+
 }
