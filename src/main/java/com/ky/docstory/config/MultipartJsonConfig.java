@@ -7,7 +7,7 @@ import org.springframework.http.converter.json.AbstractJackson2HttpMessageConver
 import org.springframework.stereotype.Component;
 
 @Component
-public class MultipartJsonConfig extends AbstractJackson2HttpMessageConverter {
+public class MultipartJsonConfig  extends AbstractJackson2HttpMessageConverter {
 
     public MultipartJsonConfig (ObjectMapper objectMapper) {
         super(objectMapper, MediaType.APPLICATION_OCTET_STREAM);
