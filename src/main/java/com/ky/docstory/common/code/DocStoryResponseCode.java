@@ -33,7 +33,8 @@ public enum DocStoryResponseCode {
     USER_NOT_FOUND(1015, "해당 유저를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     ALREADY_HANDLED(1016, "이미 처리된 요청입니다.", HttpStatus.CONFLICT),
     FILE_DOWNLOAD_FAILED(1017, "파일 다운로드에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-    INVALID_FILE(1018, "유효하지 않은 파일입니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+    FILE_DELETE_FAILED(1018, "파일 삭제에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_FILE(1019, "유효하지 않은 파일입니다.", HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final int code;
     private final String message;
