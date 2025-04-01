@@ -1,20 +1,33 @@
 package com.ky.docstory.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
-@Setter
+@SuperBuilder
 @NoArgsConstructor
-public class User {
+@AllArgsConstructor
+@Table(name = "users")
+public class User extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(nullable = false, unique = true)
+    private String providerId;
 
-    @Column(nullable = false, length = 50)
-    private String username;
+    private String nickname;
+
+    private String profilePath;
+
+    private String profileFileName;
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateProfile(String filePath, String fileName) {
+        this.profilePath = filePath;
+        this.profileFileName = fileName;
+    }
+
 }
