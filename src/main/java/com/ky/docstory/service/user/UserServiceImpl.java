@@ -38,9 +38,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserResponse getUserInfo(User currentUser) {
-        User user = userRepository.findByProviderId(currentUser.getProviderId())
-                .orElseThrow(() -> new BusinessException(DocStoryResponseCode.NOT_FOUND));
-
+        User user = findUserByProviderId(currentUser.getProviderId());
         String profileImage = encodeImageFromS3(user.getProfilePath());
         return UserResponse.from(user, profileImage);
     }
@@ -70,9 +68,7 @@ public class UserServiceImpl implements UserService{
     @Override
     @Transactional
     public void deleteUserInfo(User currentUser) {
-        User user = userRepository.findByProviderId(currentUser.getProviderId())
-                .orElseThrow(() -> new BusinessException(DocStoryResponseCode.NOT_FOUND));
-
+        User user = findUserByProviderId(currentUser.getProviderId());
         userRepository.delete(user);
     }
 
@@ -95,6 +91,11 @@ public class UserServiceImpl implements UserService{
                 .stream()
                 .map(UserInvitationResponse::from)
                 .toList();
+    }
+
+    private User findUserByProviderId(String providerId) {
+        return userRepository.findByProviderId(providerId)
+                .orElseThrow(() -> new BusinessException(DocStoryResponseCode.NOT_FOUND));
     }
 
     private ProfileImage uploadProfileImage(MultipartFile profileImage) {

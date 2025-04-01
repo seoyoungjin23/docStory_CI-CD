@@ -30,7 +30,9 @@ public class UserController implements UserApi{
     }
 
     @Override
-    public ResponseEntity<DocStoryResponseBody<Void>> signout(User currentUser, String header) {
+    public ResponseEntity<DocStoryResponseBody<Void>> signout(
+            @CurrentUser User currentUser,
+            @RequestHeader("Authorization") String header) {
         userService.deleteUserInfo(currentUser);
         return ResponseEntity.status(HttpStatus.OK).body(DocStoryResponseBody.success(null));
     }
@@ -52,7 +54,8 @@ public class UserController implements UserApi{
     }
 
     @Override
-    public ResponseEntity<DocStoryResponseBody<List<UserInvitationResponse>>> getMyInvitations(User currentUser) {
+    public ResponseEntity<DocStoryResponseBody<List<UserInvitationResponse>>> getMyInvitations(
+            @CurrentUser User currentUser) {
         List<UserInvitationResponse> userInvitationResponses = userService.getInvitations(currentUser);
         return ResponseEntity.status(HttpStatus.OK).body(DocStoryResponseBody.success(userInvitationResponses));
     }
