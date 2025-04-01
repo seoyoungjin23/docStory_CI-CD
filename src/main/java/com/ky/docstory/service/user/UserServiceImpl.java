@@ -85,7 +85,6 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    @Transactional
     public List<UserInvitationResponse> getInvitations(User currentUser) {
         return teamInviteRepository.findAllByInviteeAndStatus(currentUser, TeamInvite.Status.PENDING)
                 .stream()
