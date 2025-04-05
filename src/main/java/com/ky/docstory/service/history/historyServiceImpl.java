@@ -100,7 +100,9 @@ public class historyServiceImpl implements historyService{
                     .map(HistoryListResponse::from)
                     .toList();
 
-            responseList.add(filtered);
+            if (!filtered.isEmpty()) {
+                responseList.add(filtered);
+            }
         }
 
         return responseList;
