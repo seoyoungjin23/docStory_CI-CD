@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 import org.springframework.web.multipart.MultipartFile;
 
-public interface historyService {
+public interface HistoryService {
     HistoryResponse createHistory(UUID repositoryId, HistoryCreateRequest historyCreateRequest, MultipartFile file, User currentUser);
     List<HistoryFileResponse> getHistoryRootFiles(UUID repositoryId, User currentUser);
     List<List<HistoryListResponse>> getFilteredHistories(UUID repositoryId, List<UUID> rootIds, String status, User currentUser);

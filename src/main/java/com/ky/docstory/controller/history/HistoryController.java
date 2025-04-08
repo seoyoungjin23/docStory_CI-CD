@@ -8,7 +8,7 @@ import com.ky.docstory.dto.history.HistoryListResponse;
 import com.ky.docstory.dto.history.HistoryResponse;
 import com.ky.docstory.dto.history.HistoryUpdateRequest;
 import com.ky.docstory.entity.User;
-import com.ky.docstory.service.history.historyService;
+import com.ky.docstory.service.history.HistoryService;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class HistoryController implements HistoryApi{
 
-    private final historyService historyService;
+    private final HistoryService historyService;
 
     @Override
     public ResponseEntity<DocStoryResponseBody<HistoryResponse>> createHistory(

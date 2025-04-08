@@ -30,7 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
-public class historyServiceImpl implements historyService{
+public class HistoryServiceImpl implements HistoryService {
 
     private final UserService userService;
     private final FileService fileService;
