@@ -7,6 +7,7 @@ import com.ky.docstory.dto.file.FileUploadResponse;
 import com.ky.docstory.dto.history.HistoryCreateRequest;
 import com.ky.docstory.dto.history.HistoryDetailResponse;
 import com.ky.docstory.dto.history.HistoryFileResponse;
+import com.ky.docstory.dto.history.HistoryFilter;
 import com.ky.docstory.dto.history.HistoryListResponse;
 import com.ky.docstory.dto.history.HistoryResponse;
 import com.ky.docstory.dto.history.HistoryUpdateRequest;
@@ -98,7 +99,7 @@ public class HistoryServiceImpl implements HistoryService {
             List<History> histories = historyRepository.findByFileIn(fileTree);
 
             List<HistoryListResponse> filtered = histories.stream()
-                    .filter(h -> matchStatusFilter(h.getHistoryStatus(), status))
+                    .filter(h -> HistoryFilter.matches(h.getHistoryStatus(), status))
                     .map(HistoryListResponse::from)
                     .toList();
 
@@ -176,21 +177,6 @@ public class HistoryServiceImpl implements HistoryService {
         Collections.reverse(fileResponses);
 
         return fileResponses;
-    }
-
-    private boolean matchStatusFilter(History.HistoryStatus status, String filter) {
-        String ft = filter.toLowerCase();
-
-        if (ft.equals("main")) {
-            return status == History.HistoryStatus.MAIN;
-        }
-        if (ft.equals("sub")) {
-            return status == History.HistoryStatus.MAIN || status == History.HistoryStatus.NORMAL;
-        }
-        if (ft.equals("aband")) {
-            return status == History.HistoryStatus.MAIN || status == History.HistoryStatus.ABANDONED;
-        }
-        return true;
     }
 
     private void validateRepositoryAccess(UUID repositoryId, UUID userId) {
