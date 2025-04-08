@@ -8,12 +8,13 @@ import com.ky.docstory.dto.repository.RepositoryResponse;
 import com.ky.docstory.entity.User;
 import com.ky.docstory.service.repository.RepositoryService;
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,6 +34,25 @@ public class RepositoryController implements RepositoryApi {
     public ResponseEntity<DocStoryResponseBody<List<MyRepositoryResponse>>> getMyRepositories(User currentUser) {
         List<MyRepositoryResponse> response = repositoryService.getMyRepositories(currentUser);
         return ResponseEntity.ok(DocStoryResponseBody.success(response));
+    }
+
+    @Override
+    public ResponseEntity<DocStoryResponseBody<List<MyRepositoryResponse>>> getMyFavoriteRepositories(User currentUser) {
+        List<MyRepositoryResponse> myRepositoryResponses = repositoryService.getMyFavoriteRepositories(currentUser);
+        return ResponseEntity.status(HttpStatus.OK).body(DocStoryResponseBody.success(myRepositoryResponses));
+
+    }
+
+    @Override
+    public ResponseEntity<DocStoryResponseBody<MyRepositoryResponse>> addFavorite(User currentUser, UUID repositoryId) {
+        MyRepositoryResponse myRepositoryResponse = repositoryService.addFavorite(repositoryId, currentUser);
+        return ResponseEntity.status(HttpStatus.OK).body(DocStoryResponseBody.success(myRepositoryResponse));
+    }
+
+    @Override
+    public ResponseEntity<DocStoryResponseBody<Void>> removeFavorite(User currentUser, UUID repositoryId) {
+        repositoryService.removeFavorite(repositoryId, currentUser);
+        return ResponseEntity.status(HttpStatus.OK).body(DocStoryResponseBody.success(null));
     }
 
 }
