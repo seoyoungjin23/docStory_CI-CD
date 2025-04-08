@@ -19,13 +19,13 @@ import com.ky.docstory.repository.HistoryRepository;
 import com.ky.docstory.repository.TeamRepository;
 import com.ky.docstory.service.file.FileService;
 import com.ky.docstory.service.user.UserService;
-import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -64,6 +64,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<HistoryFileResponse> getHistoryRootFiles(UUID repositoryId, User currentUser) {
 
         validateRepositoryAccess(repositoryId, currentUser.getId());
@@ -76,6 +77,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<List<HistoryListResponse>> getFilteredHistories(UUID repositoryId, List<UUID> rootIds, String status,
                                                                 User currentUser) {
 
@@ -109,6 +111,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public HistoryDetailResponse getHistoryDetail(UUID repositoryId, UUID historyId, User currentUser) {
 
         validateRepositoryAccess(repositoryId, currentUser.getId());
