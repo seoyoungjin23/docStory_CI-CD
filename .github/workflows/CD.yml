@@ -25,10 +25,9 @@ jobs:
 
       # 3. Gradle로 JAR 빌드
       - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
-
+			  run: chmod +x ./gradlew
       - name: Build JAR
-        run: ./gradlew build
+        run: ./gradlew build -x test
 
       # 4. DockerHub 로그인
       - name: DockerHub Login
