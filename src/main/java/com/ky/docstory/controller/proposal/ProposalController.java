@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 public class ProposalController implements ProposalApi {
@@ -24,4 +27,20 @@ public class ProposalController implements ProposalApi {
         ProposalResponse response = proposalService.createProposal(request, currentUser);
         return ResponseEntity.ok(DocStoryResponseBody.success(response));
     }
+
+    @Override
+    public ResponseEntity<DocStoryResponseBody<ProposalResponse>> getProposalById(
+            UUID proposalId, User currentUser) {
+        ProposalResponse response = proposalService.getProposalById(proposalId, currentUser);
+        return ResponseEntity.ok(DocStoryResponseBody.success(response));
+    }
+
+    @Override
+    public ResponseEntity<DocStoryResponseBody<List<ProposalResponse>>> getProposalsByRepository(
+            UUID repositoryId, User currentUser) {
+        List<ProposalResponse> responses = proposalService.getProposalsByRepository(repositoryId, currentUser);
+        return ResponseEntity.ok(DocStoryResponseBody.success(responses));
+    }
+
+
 }

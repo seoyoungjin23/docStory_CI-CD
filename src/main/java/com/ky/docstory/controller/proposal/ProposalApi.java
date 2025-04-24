@@ -17,6 +17,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.UUID;
+
 @Tag(name = "Proposal", description = "Proposal 관련 API")
 @RequestMapping("/api/proposals")
 public interface ProposalApi {
@@ -36,4 +39,29 @@ public interface ProposalApi {
     ResponseEntity<DocStoryResponseBody<ProposalResponse>> createProposal(
             @Parameter(hidden = true) @CurrentUser User currentUser,
             @RequestBody @Valid ProposalCreateRequest request);
+
+    @GetMapping("/{proposalId}")
+    @Operation(summary = "Proposal 단건 조회", description = "Proposal ID로 단일 제안을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(schema = @Schema(implementation = ProposalCreateResponseWrapper.class))),
+            @ApiResponse(responseCode = "404", description = "해당 Proposal이 존재하지 않습니다.",
+                    content = @Content(schema = @Schema(implementation = NotFoundErrorResponseWrapper.class)))
+    })
+    ResponseEntity<DocStoryResponseBody<ProposalResponse>> getProposalById(
+            @Parameter(description = "Proposal ID", required = true) @PathVariable UUID proposalId,
+            @Parameter(hidden = true) @CurrentUser User currentUser);
+
+    @GetMapping("/repository/{repositoryId}")
+    @Operation(summary = "Proposal 목록 조회", description = "해당 레포지토리의 전체 제안을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공",
+                    content = @Content(schema = @Schema(implementation = ProposalListResponseWrapper.class))),
+            @ApiResponse(responseCode = "404", description = "레포지토리를 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = NotFoundErrorResponseWrapper.class)))
+    })
+    ResponseEntity<DocStoryResponseBody<List<ProposalResponse>>> getProposalsByRepository(
+            @Parameter(description = "레포지토리 ID", required = true) @PathVariable UUID repositoryId,
+            @Parameter(hidden = true) @CurrentUser User currentUser);
+
 }
