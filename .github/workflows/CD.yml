@@ -61,13 +61,4 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           username: ubuntu
-          script: |
-            echo "${{ secrets.ENV_PROD_PROPERTIES }}" > env-prod.properties
-            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/docstory:${{ env.IMAGE_TAG }}
-            docker stop docstory_container || true
-            docker rm docstory_container || true
-            docker run -d --name docstory_container \
-              -p 8080:8080 \
-              -v $(pwd)/env-prod.properties:/app/config/env-prod.properties \
-              -e SPRING_CONFIG_LOCATION=classpath:/application.properties,/app/config/env-prod.properties \
-              ${{ secrets.DOCKER_HUB_USERNAME }}/docstory:${{ env.IMAGE_TAG }}
+          script: whoami
