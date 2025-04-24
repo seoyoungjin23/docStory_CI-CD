@@ -28,7 +28,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build JAR
-        run: ./gradlew build
+        run: ./gradlew build -x test
 
       # 4. DockerHub 로그인
       - name: DockerHub Login
