@@ -26,7 +26,7 @@ jobs:
       # 3. Secret 기반 env-prod.properties 생성
       - name: Create env-prod.properties
         run: |
-          echo "${{ secrets.ENV_PROD_PROPERTIES }}" > ./src/main/resources/env.properties
+          echo "${{ secrets.ENV_PROD_PROPERTIES }}" > ./src/main/resources/env-prod.properties
 
       # 4. Gradle로 JAR 빌드 (테스트 제외)
       - name: Grant execute permission for gradlew
@@ -72,4 +72,5 @@ jobs:
             docker rm docstory_container || true
             docker run -d --name docstory_container \
               -p 8080:8080 \
+              -e SPRING_PROFILES_ACTIVE=prod \
               ${{ secrets.DOCKER_HUB_USERNAME }}/docstory:${{ env.IMAGE_TAG }}
