@@ -58,8 +58,9 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          username: ubuntu
           script: |
             echo "${{ secrets.ENV_PROD_PROPERTIES }}" > env-prod.properties
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/docstory:${{ env.IMAGE_TAG }}
