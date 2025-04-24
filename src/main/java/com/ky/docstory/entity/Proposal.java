@@ -35,4 +35,10 @@ public class Proposal extends BaseEntity {
         MERGED,
         CLOSED
     }
+
+    public void updateContent(String title, String description) {
+        this.title = title;
+        this.description = description;
+    }
+
 }

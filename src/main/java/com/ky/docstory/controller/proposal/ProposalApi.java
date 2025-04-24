@@ -4,6 +4,7 @@ import com.ky.docstory.auth.CurrentUser;
 import com.ky.docstory.common.dto.DocStoryResponseBody;
 import com.ky.docstory.dto.proposal.ProposalCreateRequest;
 import com.ky.docstory.dto.proposal.ProposalResponse;
+import com.ky.docstory.dto.proposal.ProposalUpdateRequest;
 import com.ky.docstory.entity.User;
 import com.ky.docstory.swagger.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,6 +63,23 @@ public interface ProposalApi {
     })
     ResponseEntity<DocStoryResponseBody<List<ProposalResponse>>> getProposalsByRepository(
             @Parameter(description = "레포지토리 ID", required = true) @PathVariable UUID repositoryId,
+            @Parameter(hidden = true) @CurrentUser User currentUser);
+
+    @PutMapping("/{proposalId}")
+    @Operation(summary = "Proposal 수정", description = "작성자가 제안을 수정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "수정 성공",
+                    content = @Content(schema = @Schema(implementation = ProposalUpdateResponseWrapper.class))),
+            @ApiResponse(responseCode = "403", description = "작성자만 수정할 수 있습니다.",
+                    content = @Content(schema = @Schema(implementation = ForbiddenErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "409", description = "MERGED 상태의 제안은 수정할 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = AlreadyHandledErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "404", description = "해당 제안을 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = NotFoundErrorResponseWrapper.class)))
+    })
+    ResponseEntity<DocStoryResponseBody<ProposalResponse>> updateProposal(
+            @Parameter(description = "수정할 Proposal ID", required = true) @PathVariable UUID proposalId,
+            @RequestBody @Valid ProposalUpdateRequest request,
             @Parameter(hidden = true) @CurrentUser User currentUser);
 
 }

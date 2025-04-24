@@ -4,6 +4,7 @@ import com.ky.docstory.common.code.DocStoryResponseCode;
 import com.ky.docstory.common.exception.BusinessException;
 import com.ky.docstory.dto.proposal.ProposalCreateRequest;
 import com.ky.docstory.dto.proposal.ProposalResponse;
+import com.ky.docstory.dto.proposal.ProposalUpdateRequest;
 import com.ky.docstory.entity.*;
 import com.ky.docstory.repository.HistoryRepository;
 import com.ky.docstory.repository.ProposalRepository;
@@ -51,13 +52,34 @@ public class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProposalResponse> getProposalsByRepository(UUID repositoryId, User currentUser) {
-        Repository repository = repositoryRepository.findById(repositoryId)
-                .orElseThrow(() -> new BusinessException(DocStoryResponseCode.NOT_FOUND));
+        if (!repositoryRepository.existsById(repositoryId)) {
+            throw new BusinessException(DocStoryResponseCode.NOT_FOUND);
+        }
 
         return proposalRepository.findAllByHistoryRepositoryId(repositoryId).stream()
                 .map(ProposalResponse::from)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public ProposalResponse updateProposal(UUID proposalId, ProposalUpdateRequest request, User currentUser) {
+        Proposal proposal = proposalRepository.findById(proposalId)
+                .orElseThrow(() -> new BusinessException(DocStoryResponseCode.NOT_FOUND));
+
+        if (!proposal.getCreatedBy().getId().equals(currentUser.getId())) {
+            throw new BusinessException(DocStoryResponseCode.FORBIDDEN);
+        }
+
+        if (proposal.getStatus() == Proposal.Status.MERGED) {
+            throw new BusinessException(DocStoryResponseCode.RESOURCE_CONFLICT); // 이미 반영된 제안은 수정 불가
+        }
+
+        proposal.updateContent(request.title(), request.description());
+
+        return ProposalResponse.from(proposal);
     }
 
 }

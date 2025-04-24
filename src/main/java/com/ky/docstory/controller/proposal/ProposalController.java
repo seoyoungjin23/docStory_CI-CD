@@ -4,6 +4,7 @@ import com.ky.docstory.auth.CurrentUser;
 import com.ky.docstory.common.dto.DocStoryResponseBody;
 import com.ky.docstory.dto.proposal.ProposalCreateRequest;
 import com.ky.docstory.dto.proposal.ProposalResponse;
+import com.ky.docstory.dto.proposal.ProposalUpdateRequest;
 import com.ky.docstory.entity.User;
 import com.ky.docstory.service.proposal.ProposalService;
 import jakarta.validation.Valid;
@@ -42,5 +43,11 @@ public class ProposalController implements ProposalApi {
         return ResponseEntity.ok(DocStoryResponseBody.success(responses));
     }
 
+    @Override
+    public ResponseEntity<DocStoryResponseBody<ProposalResponse>> updateProposal(
+            UUID proposalId, ProposalUpdateRequest request, User currentUser) {
+        ProposalResponse response = proposalService.updateProposal(proposalId, request, currentUser);
+        return ResponseEntity.ok(DocStoryResponseBody.success(response));
+    }
 
 }
