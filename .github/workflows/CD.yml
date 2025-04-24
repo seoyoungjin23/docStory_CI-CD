@@ -64,8 +64,8 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          username: ubuntu
+          port: ${{ secrets.EC2_PORT }}
+          username: ${{ secrets.EC2_USERNAME }}
           script: |
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/docstory:${{ env.IMAGE_TAG }}
             docker stop docstory_container || true
