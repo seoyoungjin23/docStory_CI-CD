@@ -2,6 +2,7 @@ package com.ky.docstory.service.proposal;
 
 import com.ky.docstory.dto.proposal.ProposalCreateRequest;
 import com.ky.docstory.dto.proposal.ProposalResponse;
+import com.ky.docstory.dto.proposal.ProposalStatusUpdateRequest;
 import com.ky.docstory.dto.proposal.ProposalUpdateRequest;
 import com.ky.docstory.entity.User;
 
@@ -16,5 +17,7 @@ public interface ProposalService {
     List<ProposalResponse> getProposalsByRepository(UUID repositoryId, User currentUser);
 
     ProposalResponse updateProposal(UUID proposalId, ProposalUpdateRequest request, User currentUser);
+
+    ProposalResponse updateProposalStatus(UUID proposalId, ProposalStatusUpdateRequest request, User currentUser);
 
 }

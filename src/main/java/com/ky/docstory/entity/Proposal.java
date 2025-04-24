@@ -41,4 +41,7 @@ public class Proposal extends BaseEntity {
         this.description = description;
     }
 
+    public void changeStatus(Status newStatus) {
+        this.status = newStatus;
+    }
 }

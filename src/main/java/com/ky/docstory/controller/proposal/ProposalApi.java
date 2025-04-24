@@ -4,6 +4,7 @@ import com.ky.docstory.auth.CurrentUser;
 import com.ky.docstory.common.dto.DocStoryResponseBody;
 import com.ky.docstory.dto.proposal.ProposalCreateRequest;
 import com.ky.docstory.dto.proposal.ProposalResponse;
+import com.ky.docstory.dto.proposal.ProposalStatusUpdateRequest;
 import com.ky.docstory.dto.proposal.ProposalUpdateRequest;
 import com.ky.docstory.entity.User;
 import com.ky.docstory.swagger.*;
@@ -80,6 +81,23 @@ public interface ProposalApi {
     ResponseEntity<DocStoryResponseBody<ProposalResponse>> updateProposal(
             @Parameter(description = "수정할 Proposal ID", required = true) @PathVariable UUID proposalId,
             @RequestBody @Valid ProposalUpdateRequest request,
+            @Parameter(hidden = true) @CurrentUser User currentUser);
+
+    @PatchMapping("/{proposalId}/status")
+    @Operation(summary = "Proposal 상태 변경", description = "작성자가 제안의 상태를 변경합니다. MERGED 상태는 되돌릴 수 없습니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상태 변경 성공",
+                    content = @Content(schema = @Schema(implementation = ProposalStatusUpdateResponseWrapper.class))),
+            @ApiResponse(responseCode = "403", description = "작성자만 상태를 변경할 수 있습니다.",
+                    content = @Content(schema = @Schema(implementation = ForbiddenErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "409", description = "MERGED 제안은 상태 변경할 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = AlreadyMergedProposalResponseWrapper.class))),
+            @ApiResponse(responseCode = "404", description = "해당 Proposal을 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = NotFoundErrorResponseWrapper.class)))
+    })
+    ResponseEntity<DocStoryResponseBody<ProposalResponse>> updateProposalStatus(
+            @Parameter(description = "상태를 변경할 Proposal ID", required = true) @PathVariable UUID proposalId,
+            @RequestBody @Valid ProposalStatusUpdateRequest request,
             @Parameter(hidden = true) @CurrentUser User currentUser);
 
 }

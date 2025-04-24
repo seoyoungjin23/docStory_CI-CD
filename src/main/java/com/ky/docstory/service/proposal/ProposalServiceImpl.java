@@ -4,6 +4,7 @@ import com.ky.docstory.common.code.DocStoryResponseCode;
 import com.ky.docstory.common.exception.BusinessException;
 import com.ky.docstory.dto.proposal.ProposalCreateRequest;
 import com.ky.docstory.dto.proposal.ProposalResponse;
+import com.ky.docstory.dto.proposal.ProposalStatusUpdateRequest;
 import com.ky.docstory.dto.proposal.ProposalUpdateRequest;
 import com.ky.docstory.entity.*;
 import com.ky.docstory.repository.HistoryRepository;
@@ -74,10 +75,40 @@ public class ProposalServiceImpl implements ProposalService {
         }
 
         if (proposal.getStatus() == Proposal.Status.MERGED) {
-            throw new BusinessException(DocStoryResponseCode.RESOURCE_CONFLICT); // 이미 반영된 제안은 수정 불가
+            throw new BusinessException(DocStoryResponseCode.ALREADY_MERGED_PROPOSAL);
         }
 
         proposal.updateContent(request.title(), request.description());
+
+        return ProposalResponse.from(proposal);
+    }
+
+    @Override
+    @Transactional
+    public ProposalResponse updateProposalStatus(UUID proposalId, ProposalStatusUpdateRequest request, User currentUser) {
+        Proposal proposal = proposalRepository.findById(proposalId)
+                .orElseThrow(() -> new BusinessException(DocStoryResponseCode.NOT_FOUND));
+
+        if (!proposal.getCreatedBy().getId().equals(currentUser.getId())) {
+            throw new BusinessException(DocStoryResponseCode.FORBIDDEN);
+        }
+
+        if (proposal.getStatus() == Proposal.Status.MERGED) {
+            throw new BusinessException(DocStoryResponseCode.ALREADY_MERGED_PROPOSAL);
+        }
+
+        Proposal.Status newStatus = request.status();
+
+        if (proposal.getStatus() == Proposal.Status.CLOSED && newStatus != Proposal.Status.OPEN) {
+            throw new BusinessException(DocStoryResponseCode.RESOURCE_CONFLICT);
+        }
+
+        if (proposal.getStatus() == Proposal.Status.OPEN &&
+                (newStatus != Proposal.Status.CLOSED && newStatus != Proposal.Status.MERGED)) {
+            throw new BusinessException(DocStoryResponseCode.RESOURCE_CONFLICT);
+        }
+
+        proposal.changeStatus(newStatus);
 
         return ProposalResponse.from(proposal);
     }
