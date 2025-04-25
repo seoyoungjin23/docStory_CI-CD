@@ -13,8 +13,8 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @SuperBuilder
 @NoArgsConstructor
-@Table(name = "repository_favorite")
-public class RepositoryFavorite extends BaseEntity {
+@Table(name = "favorite")
+public class Favorite extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
