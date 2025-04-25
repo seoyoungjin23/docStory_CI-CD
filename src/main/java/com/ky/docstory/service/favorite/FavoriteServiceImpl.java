@@ -69,7 +69,7 @@ public class FavoriteServiceImpl implements FavoriteService {
         Repository repository = validateRepositoryAccess(repositoryId, currentUser.getId());
 
         Favorite favorite = favoriteRepository.findByUserAndRepository(currentUser, repository)
-                .orElseThrow(() -> new BusinessException(DocStoryResponseCode.NOT_FOUND));
+                .orElseThrow(() -> new BusinessException(DocStoryResponseCode.ALREADY_HANDLED));
 
         favoriteRepository.delete(favorite);
     }

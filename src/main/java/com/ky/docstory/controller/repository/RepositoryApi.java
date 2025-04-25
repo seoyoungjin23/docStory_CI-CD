@@ -116,6 +116,8 @@ public interface RepositoryApi {
                     content = @Content(schema = @Schema(implementation = UnauthorizedErrorResponseWrapper.class))),
             @ApiResponse(responseCode = "404", description = "즐겨찾기 또는 레포지토리를 찾을 수 없습니다.",
                     content = @Content(schema = @Schema(implementation = NotFoundErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "409", description = "이미 즐겨찾기에 삭제되어있습니다.",
+                    content = @Content(schema = @Schema(implementation = AlreadyHandledErrorResponseWrapper.class))),
             @ApiResponse(responseCode = "500", description = "서버 내부 오류가 발생했습니다.",
                     content = @Content(schema = @Schema(implementation = InternalServerErrorResponseWrapper.class)))
     })
