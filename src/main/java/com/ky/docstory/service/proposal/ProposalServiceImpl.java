@@ -93,22 +93,7 @@ public class ProposalServiceImpl implements ProposalService {
             throw new BusinessException(DocStoryResponseCode.FORBIDDEN);
         }
 
-        if (proposal.getStatus() == Proposal.Status.MERGED) {
-            throw new BusinessException(DocStoryResponseCode.ALREADY_MERGED_PROPOSAL);
-        }
-
-        Proposal.Status newStatus = request.status();
-
-        if (proposal.getStatus() == Proposal.Status.CLOSED && newStatus != Proposal.Status.OPEN) {
-            throw new BusinessException(DocStoryResponseCode.RESOURCE_CONFLICT);
-        }
-
-        if (proposal.getStatus() == Proposal.Status.OPEN &&
-                (newStatus != Proposal.Status.CLOSED && newStatus != Proposal.Status.MERGED)) {
-            throw new BusinessException(DocStoryResponseCode.RESOURCE_CONFLICT);
-        }
-
-        proposal.changeStatus(newStatus);
+        proposal.changeStatus(request.status());
 
         return ProposalResponse.from(proposal);
     }
