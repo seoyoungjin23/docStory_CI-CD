@@ -51,7 +51,7 @@ public class RepositoryServiceImpl implements RepositoryService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<MyRepositoryResponse> getMyRepositories(User currentUser) {
         List<Team> myTeams = teamRepository.findAllByUserWithRepository(currentUser);
 
