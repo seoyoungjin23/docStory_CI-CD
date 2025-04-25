@@ -6,6 +6,7 @@ import com.ky.docstory.dto.repository.MyRepositoryResponse;
 import com.ky.docstory.dto.repository.RepositoryCreateRequest;
 import com.ky.docstory.dto.repository.RepositoryResponse;
 import com.ky.docstory.entity.User;
+import com.ky.docstory.swagger.AlreadyHandledErrorResponseWrapper;
 import com.ky.docstory.swagger.BadRequestErrorResponseWrapper;
 import com.ky.docstory.swagger.FavoriteRepositoryResponseWrapper;
 import com.ky.docstory.swagger.InternalServerErrorResponseWrapper;
@@ -93,6 +94,8 @@ public interface RepositoryApi {
                     content = @Content(schema = @Schema(implementation = UnauthorizedErrorResponseWrapper.class))),
             @ApiResponse(responseCode = "404", description = "레포지토리를 찾을 수 없습니다.",
                     content = @Content(schema = @Schema(implementation = NotFoundErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "409", description = "이미 즐겨찾기에 추가되어있습니다.",
+                    content = @Content(schema = @Schema(implementation = AlreadyHandledErrorResponseWrapper.class))),
             @ApiResponse(responseCode = "500", description = "서버 내부 오류가 발생했습니다.",
                     content = @Content(schema = @Schema(implementation = InternalServerErrorResponseWrapper.class)))
     })

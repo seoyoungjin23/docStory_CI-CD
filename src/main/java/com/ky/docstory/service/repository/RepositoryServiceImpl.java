@@ -90,7 +90,7 @@ public class RepositoryServiceImpl implements RepositoryService {
 
         boolean exists = repositoryFavoriteRepository.existsByUserAndRepository(currentUser, repository);
         if (exists) {
-            throw new BusinessException(DocStoryResponseCode.BAD_REQUEST);
+            throw new BusinessException(DocStoryResponseCode.ALREADY_HANDLED);
         }
 
         RepositoryFavorite favorite = RepositoryFavorite.builder()
