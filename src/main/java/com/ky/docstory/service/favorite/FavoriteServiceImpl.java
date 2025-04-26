@@ -2,13 +2,13 @@ package com.ky.docstory.service.favorite;
 
 import com.ky.docstory.common.code.DocStoryResponseCode;
 import com.ky.docstory.common.exception.BusinessException;
+import com.ky.docstory.common.validator.RepositoryValidator;
 import com.ky.docstory.dto.repository.MyRepositoryResponse;
 import com.ky.docstory.entity.Favorite;
 import com.ky.docstory.entity.Repository;
 import com.ky.docstory.entity.Team;
 import com.ky.docstory.entity.User;
 import com.ky.docstory.repository.FavoriteRepository;
-import com.ky.docstory.repository.RepositoryRepository;
 import com.ky.docstory.repository.TeamRepository;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class FavoriteServiceImpl implements FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
-    private final RepositoryRepository repositoryRepository;
+    private final RepositoryValidator repositoryValidator;
     private final TeamRepository teamRepository;
 
     @Override
@@ -58,7 +58,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Override
     @Transactional
     public MyRepositoryResponse addFavorite(UUID repositoryId, User currentUser) {
-        Repository repository = validateRepositoryAccess(repositoryId, currentUser.getId());
+        Repository repository = repositoryValidator.validateRepositoryAccess(repositoryId, currentUser.getId());
 
         boolean exists = favoriteRepository.existsByUserAndRepository(currentUser, repository);
         if (exists) {
@@ -81,7 +81,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     @Override
     @Transactional
     public void removeFavorite(UUID repositoryId, User currentUser) {
-        Repository repository = validateRepositoryAccess(repositoryId, currentUser.getId());
+        Repository repository = repositoryValidator.validateRepositoryAccess(repositoryId, currentUser.getId());
 
         Favorite favorite = favoriteRepository.findByUserAndRepository(currentUser, repository)
                 .orElseThrow(() -> new BusinessException(DocStoryResponseCode.NOT_FOUND));
@@ -89,13 +89,4 @@ public class FavoriteServiceImpl implements FavoriteService {
         favoriteRepository.delete(favorite);
     }
 
-    private Repository validateRepositoryAccess(UUID repositoryId, UUID userId) {
-        Repository repository = repositoryRepository.findById(repositoryId)
-                .orElseThrow(() -> new BusinessException(DocStoryResponseCode.NOT_FOUND));
-
-        teamRepository.findByRepositoryAndUserId(repository, userId)
-                .orElseThrow(() -> new BusinessException(DocStoryResponseCode.FORBIDDEN));
-
-        return repository;
-    }
 }
