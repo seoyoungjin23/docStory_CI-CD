@@ -2,10 +2,7 @@ package com.ky.docstory.controller.proposal;
 
 import com.ky.docstory.auth.CurrentUser;
 import com.ky.docstory.common.dto.DocStoryResponseBody;
-import com.ky.docstory.dto.proposal.ProposalCreateRequest;
-import com.ky.docstory.dto.proposal.ProposalResponse;
-import com.ky.docstory.dto.proposal.ProposalStatusUpdateRequest;
-import com.ky.docstory.dto.proposal.ProposalUpdateRequest;
+import com.ky.docstory.dto.proposal.*;
 import com.ky.docstory.entity.User;
 import com.ky.docstory.service.proposal.ProposalService;
 import jakarta.validation.Valid;
@@ -37,13 +34,14 @@ public class ProposalController implements ProposalApi {
         ProposalResponse response = proposalService.getProposalById(proposalId, currentUser);
         return ResponseEntity.ok(DocStoryResponseBody.success(response));
     }
-
     @Override
     public ResponseEntity<DocStoryResponseBody<List<ProposalResponse>>> getProposalsByRepository(
-            UUID repositoryId,
+            @PathVariable UUID repositoryId,
+            @RequestParam ProposalFilterType filter,
             @CurrentUser User currentUser) {
-        List<ProposalResponse> responses = proposalService.getProposalsByRepository(repositoryId, currentUser);
-        return ResponseEntity.ok(DocStoryResponseBody.success(responses));
+
+        List<ProposalResponse> proposals = proposalService.getProposalsByRepository(repositoryId, filter, currentUser);
+        return ResponseEntity.ok(DocStoryResponseBody.success(proposals));
     }
 
     @Override

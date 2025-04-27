@@ -3,10 +3,7 @@ package com.ky.docstory.service.proposal;
 import com.ky.docstory.common.code.DocStoryResponseCode;
 import com.ky.docstory.common.exception.BusinessException;
 import com.ky.docstory.common.validator.ProposalMergeValidator;
-import com.ky.docstory.dto.proposal.ProposalCreateRequest;
-import com.ky.docstory.dto.proposal.ProposalResponse;
-import com.ky.docstory.dto.proposal.ProposalStatusUpdateRequest;
-import com.ky.docstory.dto.proposal.ProposalUpdateRequest;
+import com.ky.docstory.dto.proposal.*;
 import com.ky.docstory.entity.*;
 import com.ky.docstory.repository.HistoryRepository;
 import com.ky.docstory.repository.ProposalRepository;
@@ -56,12 +53,15 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ProposalResponse> getProposalsByRepository(UUID repositoryId, User currentUser) {
+    public List<ProposalResponse> getProposalsByRepository(UUID repositoryId, ProposalFilterType filterType, User currentUser) {
         if (!repositoryRepository.existsById(repositoryId)) {
             throw new BusinessException(DocStoryResponseCode.NOT_FOUND);
         }
 
-        return proposalRepository.findAllByHistoryRepositoryId(repositoryId).stream()
+        List<Proposal.Status> statuses = filterType.toStatuses();
+        List<Proposal> proposals = proposalRepository.findAllByRepositoryIdAndStatuses(repositoryId, statuses.isEmpty() ? null : statuses);
+
+        return proposals.stream()
                 .map(ProposalResponse::from)
                 .toList();
     }
