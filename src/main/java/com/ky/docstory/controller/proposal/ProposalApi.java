@@ -100,4 +100,20 @@ public interface ProposalApi {
             @RequestBody @Valid ProposalStatusUpdateRequest request,
             @Parameter(hidden = true) @CurrentUser User currentUser);
 
+    @PatchMapping("/{proposalId}/merge")
+    @Operation(summary = "Proposal 병합", description = "Proposal을 병합하고 연결된 파일 트리 기준으로 History 상태를 변경합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "병합 성공",
+                    content = @Content(schema = @Schema(implementation = ProposalMergeResponseWrapper.class))),
+            @ApiResponse(responseCode = "403", description = "병합 권한이 없습니다.",
+                    content = @Content(schema = @Schema(implementation = ForbiddenErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "409", description = "이미 병합된 Proposal입니다.",
+                    content = @Content(schema = @Schema(implementation = AlreadyMergedProposalResponseWrapper.class))),
+            @ApiResponse(responseCode = "404", description = "해당 Proposal을 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = NotFoundErrorResponseWrapper.class)))
+    })
+    ResponseEntity<DocStoryResponseBody<ProposalResponse>> mergeProposal(
+            @Parameter(description = "병합할 Proposal ID", required = true) @PathVariable UUID proposalId,
+            @Parameter(hidden = true) @CurrentUser User currentUser);
+
 }

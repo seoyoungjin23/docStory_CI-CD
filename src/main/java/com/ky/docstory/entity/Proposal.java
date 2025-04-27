@@ -56,4 +56,12 @@ public class Proposal extends BaseEntity {
         }
         this.status = newStatus;
     }
+
+    public void merge() {
+        if (this.status == Status.MERGED) {
+            throw new BusinessException(DocStoryResponseCode.ALREADY_MERGED_PROPOSAL);
+        }
+        this.status = Status.MERGED;
+    }
+
 }

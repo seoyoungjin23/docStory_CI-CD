@@ -63,4 +63,12 @@ public class ProposalController implements ProposalApi {
         ProposalResponse response = proposalService.updateProposalStatus(proposalId, request, currentUser);
         return ResponseEntity.ok(DocStoryResponseBody.success(response));
     }
+
+    @Override
+    public ResponseEntity<DocStoryResponseBody<ProposalResponse>> mergeProposal(
+            UUID proposalId, User currentUser) {
+        ProposalResponse response = proposalService.mergeProposal(proposalId, currentUser);
+        return ResponseEntity.ok(DocStoryResponseBody.success(response));
+    }
+
 }

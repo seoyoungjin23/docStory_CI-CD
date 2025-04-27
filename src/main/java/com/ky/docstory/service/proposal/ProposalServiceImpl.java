@@ -2,6 +2,7 @@ package com.ky.docstory.service.proposal;
 
 import com.ky.docstory.common.code.DocStoryResponseCode;
 import com.ky.docstory.common.exception.BusinessException;
+import com.ky.docstory.common.validator.ProposalMergeValidator;
 import com.ky.docstory.dto.proposal.ProposalCreateRequest;
 import com.ky.docstory.dto.proposal.ProposalResponse;
 import com.ky.docstory.dto.proposal.ProposalStatusUpdateRequest;
@@ -14,8 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +24,8 @@ public class ProposalServiceImpl implements ProposalService {
     private final ProposalRepository proposalRepository;
     private final HistoryRepository historyRepository;
     private final RepositoryRepository repositoryRepository;
+    private final ProposalMergeValidator validator;
+
 
     @Override
     @Transactional
@@ -96,6 +98,54 @@ public class ProposalServiceImpl implements ProposalService {
         proposal.changeStatus(request.status());
 
         return ProposalResponse.from(proposal);
+    }
+
+    @Override
+    @Transactional
+    public ProposalResponse mergeProposal(UUID proposalId, User currentUser) {
+        Proposal proposal = proposalRepository.findById(proposalId)
+                .orElseThrow(() -> new BusinessException(DocStoryResponseCode.NOT_FOUND));
+
+        validator.validateMergePermission(proposal, currentUser);
+        validator.validateMergeable(proposal);
+
+        Set<UUID> mainHistoryIds = collectMainChainHistories(proposal.getHistory());
+
+        updateHistoriesStatus(proposal.getHistory().getRepository(), proposal.getHistory().getFile().getRootFile(), mainHistoryIds);
+
+        proposal.merge();
+
+        return ProposalResponse.from(proposal);
+    }
+
+    private Set<UUID> collectMainChainHistories(History targetHistory) {
+        Set<UUID> mainHistoryIds = new HashSet<>();
+        File currentFile = targetHistory.getFile();
+
+        while (currentFile != null) {
+            Optional<History> connectedHistory = historyRepository.findByFile(currentFile);
+            connectedHistory.ifPresent(history -> mainHistoryIds.add(history.getId()));
+            currentFile = currentFile.getParentFile();
+        }
+        return mainHistoryIds;
+    }
+
+    private void updateHistoriesStatus(Repository repository, File rootFile, Set<UUID> mainHistoryIds) {
+        List<History> histories = historyRepository.findAllByRepositoryId(repository.getId());
+
+        for (History history : histories) {
+            File file = history.getFile();
+            if (file == null || file.getRootFile() == null) continue;
+            if (!file.getRootFile().getId().equals(rootFile.getId())) continue;
+
+            if (mainHistoryIds.contains(history.getId())) {
+                history.changeStatus(History.HistoryStatus.MAIN);
+            } else if (history.getHistoryStatus() == null) {
+                history.changeStatus(History.HistoryStatus.NORMAL);
+            } else {
+                history.changeStatus(History.HistoryStatus.ABANDONED);
+            }
+        }
     }
 
 }

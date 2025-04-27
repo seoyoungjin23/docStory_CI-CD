@@ -20,4 +20,5 @@ public interface ProposalService {
 
     ProposalResponse updateProposalStatus(UUID proposalId, ProposalStatusUpdateRequest request, User currentUser);
 
+    ProposalResponse mergeProposal(UUID proposalId, User currentUser);
 }
