@@ -37,4 +37,9 @@ public class History extends BaseEntity {
     public enum HistoryStatus {
         NORMAL, MAIN, ABANDONED
     }
+
+    public void changeStatus(HistoryStatus newStatus) {
+        this.historyStatus = newStatus;
+    }
+
 }

@@ -27,6 +27,10 @@ public class File extends BaseEntity {
     @JoinColumn(name = "parent_file_id")
     private File parentFile;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "root_file_id")
+    private File rootFile;
+
     @Column(nullable = false)
     private String originFilename;
 
