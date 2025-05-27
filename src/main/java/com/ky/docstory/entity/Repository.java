@@ -21,4 +21,9 @@ public class Repository extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
+
+    public void updateRepository(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 }

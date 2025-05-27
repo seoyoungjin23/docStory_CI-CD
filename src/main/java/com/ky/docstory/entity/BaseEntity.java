@@ -31,4 +31,12 @@ public abstract class BaseEntity {
 
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
+
+    public void markAsDeleted() {
+        this.deleted = true;
+    }
+
+    public void restore() {
+        this.deleted = false;
+    }
 }
