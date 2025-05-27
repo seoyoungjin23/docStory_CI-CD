@@ -59,12 +59,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     .nickname(userInfo.getNickname())
                     .profilePath(profileImage.getFilePath())
                     .profileFileName(profileImage.getSaveFilename())
+                    .email(userInfo.getEmail())
                     .build();
 
             user = userRepository.save(user);
         }
 
-        return new CustomOAuth2User(oAuth2User, user.getProviderId(), user.getNickname(), user.getProfilePath());
+        return new CustomOAuth2User(oAuth2User, user.getProviderId(), user.getNickname(), user.getProfilePath(), user.getEmail());
     }
 
     private ProfileImage uploadProfileImage(String socialFileUrl) throws IOException {

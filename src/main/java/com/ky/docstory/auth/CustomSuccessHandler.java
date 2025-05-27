@@ -31,11 +31,13 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String providerId = customOAuth2User.getProviderId();
         String nickname = customOAuth2User.getNickname();
         String profileImage = customOAuth2User.getProfileImage();
+        String email = customOAuth2User.getEmail();
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("providerId", providerId);
         claims.put("nickname", nickname);
         claims.put("profileImage", profileImage);
+        claims.put("email", email);
 
         String token = jwtUtil.createToken(claims);
 
