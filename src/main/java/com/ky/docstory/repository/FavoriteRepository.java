@@ -15,6 +15,6 @@ public interface FavoriteRepository extends JpaRepository<Favorite, UUID> {
 
     boolean existsByUserAndRepository(User user, Repository repository);
 
-    @Query("SELECT f FROM Favorite f JOIN FETCH f.repository r WHERE f.user = :user")
+    @Query("SELECT f FROM Favorite f JOIN FETCH f.repository r JOIN FETCH r.owner WHERE f.user = :user")
     List<Favorite> findAllByUser(@Param("user") User user);
 }
