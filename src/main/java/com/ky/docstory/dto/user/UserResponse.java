@@ -13,13 +13,17 @@ public record UserResponse(
         String nickname,
 
         @Schema(description = "현재 사용자 프로필 이미지", example = "인코딩된 프로필 이미지")
-        String profileImage
+        String profileImage,
+
+        @Schema(description = "현재 사용자 이메일", example = "영진@example.com")
+        String email
 ) {
     public static UserResponse from(User user, String profileImage) {
         return new UserResponse(
                 user.getProviderId(),
                 user.getNickname(),
-                profileImage
+                profileImage,
+                user.getEmail()
         );
     }
 }

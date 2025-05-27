@@ -21,6 +21,8 @@ public class User extends BaseEntity {
 
     private String profileFileName;
 
+    private String email;
+
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }

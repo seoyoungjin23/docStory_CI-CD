@@ -12,12 +12,15 @@ public class CustomOAuth2User implements OAuth2User {
     private final String providerId;
     private final String nickname;
     private final String profileImage;
+    private final String email;
 
-    public CustomOAuth2User(OAuth2User oAuth2User, String providerId, String nickname, String profileImage) {
+    public CustomOAuth2User(OAuth2User oAuth2User, String providerId, String nickname, String profileImage,
+                            String email) {
         this.oAuth2User = oAuth2User;
         this.providerId = providerId;
         this.nickname = nickname;
         this.profileImage = profileImage;
+        this.email = email;
     }
 
     @Override
@@ -45,5 +48,9 @@ public class CustomOAuth2User implements OAuth2User {
 
     public String getProfileImage() {
         return profileImage;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }

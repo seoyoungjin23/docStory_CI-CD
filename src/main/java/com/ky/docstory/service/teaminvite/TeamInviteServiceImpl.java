@@ -9,7 +9,6 @@ import com.ky.docstory.repository.RepositoryRepository;
 import com.ky.docstory.repository.TeamInviteRepository;
 import com.ky.docstory.repository.TeamRepository;
 import com.ky.docstory.repository.UserRepository;
-import com.ky.docstory.service.teaminvite.TeamInviteService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,11 +34,11 @@ public class TeamInviteServiceImpl implements TeamInviteService {
             throw new BusinessException(DocStoryResponseCode.FORBIDDEN);
         }
 
-        if (inviter.getId().equals(request.inviteeId())) {
+        if (inviter.getEmail().equals(request.email())) {
             throw new BusinessException(DocStoryResponseCode.PARAMETER_ERROR);
         }
 
-        User invitee = userRepository.findById(request.inviteeId())
+        User invitee = userRepository.findByEmail(request.email())
                 .orElseThrow(() -> new BusinessException(DocStoryResponseCode.NOT_FOUND));
 
         if (teamInviteRepository.existsByRepositoryAndInvitee(repository, invitee)) {
