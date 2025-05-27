@@ -17,6 +17,9 @@ public record TeamMemberResponse(
         @Schema(description = "프로필 이미지 경로", example = "https://example.com/profile.jpg")
         String profileImage,
 
+        @Schema(description = "팀원 이메일", example = "kanguk@example.com")
+        String email,
+
         @Schema(description = "팀원 역할", example = "CONTRIBUTOR")
         String role
 ) {
@@ -25,6 +28,7 @@ public record TeamMemberResponse(
                 team.getUser().getId(),
                 team.getUser().getNickname(),
                 team.getUser().getProfilePath(),
+                team.getUser().getEmail(),
                 team.getRole().name()
         );
     }
