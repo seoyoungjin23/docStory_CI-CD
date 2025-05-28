@@ -3,6 +3,7 @@ package com.ky.docstory.dto.repository;
 import com.ky.docstory.entity.Team;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Schema(description = "내가 속한 레포지토리 응답 DTO")
@@ -24,16 +25,25 @@ public record MyRepositoryResponse(
         Team.Role myRole,
 
         @Schema(description = "즐겨 찾기 여부", example = "ture")
-        boolean isFavorite
+        boolean isFavorite,
+
+        @Schema(description = "파일 유형 목록", example = "[\"DOCX\", \"PDF\", \"HWP\"]")
+        Set<String> fileTypes
 ) {
-    public static MyRepositoryResponse from(Team team, boolean isFavorite) {
+    public static MyRepositoryResponse from(Team team, boolean isFavorite, Set<String> fileTypes) {
         return new MyRepositoryResponse(
                 team.getRepository().getId(),
                 team.getRepository().getName(),
                 team.getRepository().getDescription(),
                 team.getRepository().getOwner().getNickname(),
                 team.getRole(),
-                isFavorite
+                isFavorite,
+                fileTypes
         );
+    }
+
+    // 기존 메서드 호환성을 위한 오버로드
+    public static MyRepositoryResponse from(Team team, boolean isFavorite) {
+        return from(team, isFavorite, Set.of());
     }
 }

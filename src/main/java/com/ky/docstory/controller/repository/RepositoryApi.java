@@ -4,7 +4,9 @@ import com.ky.docstory.auth.CurrentUser;
 import com.ky.docstory.common.dto.DocStoryResponseBody;
 import com.ky.docstory.dto.repository.MyRepositoryResponse;
 import com.ky.docstory.dto.repository.RepositoryCreateRequest;
+import com.ky.docstory.dto.repository.RepositoryDetailResponse;
 import com.ky.docstory.dto.repository.RepositoryResponse;
+import com.ky.docstory.dto.repository.RepositoryUpdateRequest;
 import com.ky.docstory.entity.User;
 import com.ky.docstory.swagger.AlreadyHandledErrorResponseWrapper;
 import com.ky.docstory.swagger.BadRequestErrorResponseWrapper;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -67,6 +70,62 @@ public interface RepositoryApi {
     @GetMapping("/my")
     ResponseEntity<DocStoryResponseBody<List<MyRepositoryResponse>>> getMyRepositories(
             @Parameter(hidden = true) @CurrentUser User currentUser);
+
+    @GetMapping("/{repositoryId}")
+    @Operation(summary = "레포지토리 상세 조회", description = "레포지토리의 상세 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "레포지토리 상세 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자입니다.",
+                    content = @Content(schema = @Schema(implementation = UnauthorizedErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "403", description = "접근 권한이 없습니다.",
+                    content = @Content(schema = @Schema(implementation = BadRequestErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "404", description = "레포지토리를 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = NotFoundErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류가 발생했습니다.",
+                    content = @Content(schema = @Schema(implementation = InternalServerErrorResponseWrapper.class)))
+    })
+    ResponseEntity<DocStoryResponseBody<RepositoryDetailResponse>> getRepositoryDetail(
+            @Parameter(hidden = true) @CurrentUser User currentUser,
+            @PathVariable("repositoryId") UUID repositoryId);
+
+    @PutMapping("/{repositoryId}")
+    @Operation(summary = "레포지토리 수정", description = "레포지토리 정보를 수정합니다. 소유자만 수정 가능합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "레포지토리 수정 성공",
+                    content = @Content(schema = @Schema(implementation = RepositoryCreateResponseWrapper.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.",
+                    content = @Content(schema = @Schema(implementation = BadRequestErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자입니다.",
+                    content = @Content(schema = @Schema(implementation = UnauthorizedErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "403", description = "수정 권한이 없습니다.",
+                    content = @Content(schema = @Schema(implementation = BadRequestErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "404", description = "레포지토리를 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = NotFoundErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류가 발생했습니다.",
+                    content = @Content(schema = @Schema(implementation = InternalServerErrorResponseWrapper.class)))
+    })
+    ResponseEntity<DocStoryResponseBody<RepositoryResponse>> updateRepository(
+            @Parameter(hidden = true) @CurrentUser User currentUser,
+            @PathVariable("repositoryId") UUID repositoryId,
+            @RequestBody @Valid RepositoryUpdateRequest request);
+
+    @DeleteMapping("/{repositoryId}")
+    @Operation(summary = "레포지토리 삭제", description = "레포지토리를 삭제합니다. 소유자만 삭제 가능합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "레포지토리 삭제 성공",
+                    content = @Content(schema = @Schema(implementation = SuccessEmptyResponseWrapper.class))),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자입니다.",
+                    content = @Content(schema = @Schema(implementation = UnauthorizedErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "403", description = "삭제 권한이 없습니다.",
+                    content = @Content(schema = @Schema(implementation = BadRequestErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "404", description = "레포지토리를 찾을 수 없습니다.",
+                    content = @Content(schema = @Schema(implementation = NotFoundErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류가 발생했습니다.",
+                    content = @Content(schema = @Schema(implementation = InternalServerErrorResponseWrapper.class)))
+    })
+    ResponseEntity<DocStoryResponseBody<Void>> deleteRepository(
+            @Parameter(hidden = true) @CurrentUser User currentUser,
+            @PathVariable("repositoryId") UUID repositoryId);
 
     @GetMapping("/favorites")
     @Operation(summary = "내 즐겨찾기 레포지토리 목록 조회", description = "현재 로그인한 사용자가 즐겨찾기한 레포지토리 목록을 조회합니다.")

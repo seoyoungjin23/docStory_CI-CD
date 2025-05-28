@@ -4,7 +4,9 @@ import com.ky.docstory.auth.CurrentUser;
 import com.ky.docstory.common.dto.DocStoryResponseBody;
 import com.ky.docstory.dto.repository.MyRepositoryResponse;
 import com.ky.docstory.dto.repository.RepositoryCreateRequest;
+import com.ky.docstory.dto.repository.RepositoryDetailResponse;
 import com.ky.docstory.dto.repository.RepositoryResponse;
+import com.ky.docstory.dto.repository.RepositoryUpdateRequest;
 import com.ky.docstory.entity.User;
 import com.ky.docstory.service.favorite.FavoriteService;
 import com.ky.docstory.service.repository.RepositoryService;
@@ -14,6 +16,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,6 +39,31 @@ public class RepositoryController implements RepositoryApi {
     public ResponseEntity<DocStoryResponseBody<List<MyRepositoryResponse>>> getMyRepositories(User currentUser) {
         List<MyRepositoryResponse> response = repositoryService.getMyRepositories(currentUser);
         return ResponseEntity.ok(DocStoryResponseBody.success(response));
+    }
+
+    @Override
+    public ResponseEntity<DocStoryResponseBody<RepositoryDetailResponse>> getRepositoryDetail(
+            @CurrentUser User currentUser,
+            @PathVariable UUID repositoryId) {
+        RepositoryDetailResponse response = repositoryService.getRepositoryDetail(repositoryId, currentUser);
+        return ResponseEntity.ok(DocStoryResponseBody.success(response));
+    }
+
+    @Override
+    public ResponseEntity<DocStoryResponseBody<RepositoryResponse>> updateRepository(
+            @CurrentUser User currentUser,
+            @PathVariable UUID repositoryId,
+            @RequestBody @Valid RepositoryUpdateRequest request) {
+        RepositoryResponse response = repositoryService.updateRepository(repositoryId, request, currentUser);
+        return ResponseEntity.ok(DocStoryResponseBody.success(response));
+    }
+
+    @Override
+    public ResponseEntity<DocStoryResponseBody<Void>> deleteRepository(
+            @CurrentUser User currentUser,
+            @PathVariable UUID repositoryId) {
+        repositoryService.deleteRepository(repositoryId, currentUser);
+        return ResponseEntity.ok(DocStoryResponseBody.success(null));
     }
 
     @Override

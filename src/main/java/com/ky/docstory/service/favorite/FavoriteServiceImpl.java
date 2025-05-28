@@ -5,13 +5,16 @@ import com.ky.docstory.common.exception.BusinessException;
 import com.ky.docstory.common.validator.RepositoryValidator;
 import com.ky.docstory.dto.repository.MyRepositoryResponse;
 import com.ky.docstory.entity.Favorite;
+import com.ky.docstory.entity.File;
 import com.ky.docstory.entity.Repository;
 import com.ky.docstory.entity.Team;
 import com.ky.docstory.entity.User;
 import com.ky.docstory.repository.FavoriteRepository;
+import com.ky.docstory.repository.FileRepository;
 import com.ky.docstory.repository.TeamRepository;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,7 @@ public class FavoriteServiceImpl implements FavoriteService {
     private final FavoriteRepository favoriteRepository;
     private final RepositoryValidator repositoryValidator;
     private final TeamRepository teamRepository;
+    private final FileRepository fileRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -50,7 +54,13 @@ public class FavoriteServiceImpl implements FavoriteService {
                     if (team == null) {
                         throw new BusinessException(DocStoryResponseCode.FORBIDDEN);
                     }
-                    return MyRepositoryResponse.from(team, true);
+                    
+                    List<File> repositoryFiles = fileRepository.findByRepositoryIdAndParentFileIsNull(repo.getId());
+                    Set<String> fileTypes = repositoryFiles.stream()
+                            .map(file -> file.getFileType().name())
+                            .collect(Collectors.toSet());
+                    
+                    return MyRepositoryResponse.from(team, true, fileTypes);
                 })
                 .toList();
     }
@@ -75,7 +85,12 @@ public class FavoriteServiceImpl implements FavoriteService {
         Team team = teamRepository.findByRepositoryAndUser(repository, currentUser)
                 .orElseThrow(() -> new BusinessException(DocStoryResponseCode.FORBIDDEN));
 
-        return MyRepositoryResponse.from(team, true);
+        List<File> repositoryFiles = fileRepository.findByRepositoryIdAndParentFileIsNull(repositoryId);
+        Set<String> fileTypes = repositoryFiles.stream()
+                .map(file -> file.getFileType().name())
+                .collect(Collectors.toSet());
+
+        return MyRepositoryResponse.from(team, true, fileTypes);
     }
 
     @Override
