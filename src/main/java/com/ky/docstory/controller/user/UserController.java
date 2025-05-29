@@ -3,11 +3,13 @@ package com.ky.docstory.controller.user;
 import com.ky.docstory.auth.CurrentUser;
 import com.ky.docstory.common.dto.DocStoryResponseBody;
 import com.ky.docstory.dto.user.UpdateUserRequest;
+import com.ky.docstory.dto.user.UserAuthorityResponse;
 import com.ky.docstory.dto.user.UserInvitationResponse;
 import com.ky.docstory.dto.user.UserResponse;
 import com.ky.docstory.entity.User;
 import com.ky.docstory.service.user.UserService;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,5 +60,14 @@ public class UserController implements UserApi{
             @CurrentUser User currentUser) {
         List<UserInvitationResponse> userInvitationResponses = userService.getInvitations(currentUser);
         return ResponseEntity.status(HttpStatus.OK).body(DocStoryResponseBody.success(userInvitationResponses));
+    }
+
+    @Override
+    public ResponseEntity<DocStoryResponseBody<UserAuthorityResponse>> getMyAuthorityInRepository(
+            @CurrentUser User currentUser,
+            UUID repositoryId
+    ) {
+        UserAuthorityResponse authorityResponse = userService.getAuthorityInRepository(currentUser, repositoryId);
+        return ResponseEntity.status(HttpStatus.OK).body(DocStoryResponseBody.success(authorityResponse));
     }
 }
