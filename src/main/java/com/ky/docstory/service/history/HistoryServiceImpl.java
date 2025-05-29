@@ -122,7 +122,7 @@ public class HistoryServiceImpl implements HistoryService {
 
         History savedHistory = getHistoryByIdOrThrow(historyId);
 
-        List<FileResponse> fileResponses = getFileResponseTreeFromChild(savedHistory.getFile());
+        List<FileResponse> fileResponses = List.of(FileResponse.from(savedHistory.getFile()));
 
         UserResponse userResponse = userService.getUserInfo(savedHistory.getCreatedBy());
 
