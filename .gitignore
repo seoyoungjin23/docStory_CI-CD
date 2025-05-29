@@ -103,6 +103,8 @@ fabric.properties
 
 !.idea/codeStyles
 !.idea/runConfigurations
+.cursor/
+.vscode/
 
 ### Java ###
 # Compiled class file
@@ -194,6 +196,7 @@ $RECYCLE.BIN/
 **/build/
 !src/**/build/
 
+
 # Ignore Gradle GUI config
 gradle-app.setting
 
@@ -222,3 +225,4 @@ gradle-app.setting
 src/main/resources/env-dev.properties
 src/main/resources/env-prod.properties
 .env
+
