@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Schema(description = "Proposal 응답 DTO")
+@Schema(description = "Proposal 상세 응답 DTO")
 public record ProposalDetailResponse(
 
         @Schema(description = "Proposal ID", example = "d947891e-3c5e-4ae0-9d71-eee6f3f2c3a1")
