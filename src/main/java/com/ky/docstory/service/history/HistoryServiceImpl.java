@@ -100,7 +100,10 @@ public class HistoryServiceImpl implements HistoryService {
 
             List<HistoryListResponse> filtered = histories.stream()
                     .filter(h -> HistoryFilter.matches(h.getHistoryStatus(), status))
-                    .map(HistoryListResponse::from)
+                    .map(h -> {
+                        UserResponse userResponse = userService.getUserInfo(h.getCreatedBy());
+                        return HistoryListResponse.from(h, userResponse);
+                    })
                     .toList();
 
             if (!filtered.isEmpty()) {
@@ -121,7 +124,7 @@ public class HistoryServiceImpl implements HistoryService {
 
         List<FileResponse> fileResponses = getFileResponseTreeFromChild(savedHistory.getFile());
 
-        UserResponse userResponse = userService.getUserInfo(currentUser);
+        UserResponse userResponse = userService.getUserInfo(savedHistory.getCreatedBy());
 
         return HistoryDetailResponse.from(savedHistory, fileResponses, userResponse);
     }
