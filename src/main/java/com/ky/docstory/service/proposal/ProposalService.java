@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface ProposalService {
     ProposalResponse createProposal(ProposalCreateRequest request, User currentUser);
 
-    ProposalResponse getProposalById(UUID proposalId, User currentUser);
+    ProposalDetailResponse getProposalById(UUID proposalId, User currentUser);
 
     List<ProposalResponse> getProposalsByRepository(UUID repositoryId, ProposalFilterType filterType, User currentUser);
 

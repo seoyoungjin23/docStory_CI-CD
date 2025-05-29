@@ -28,10 +28,10 @@ public class ProposalController implements ProposalApi {
     }
 
     @Override
-    public ResponseEntity<DocStoryResponseBody<ProposalResponse>> getProposalById(
+    public ResponseEntity<DocStoryResponseBody<ProposalDetailResponse>> getProposalById(
             UUID proposalId,
             @CurrentUser User currentUser) {
-        ProposalResponse response = proposalService.getProposalById(proposalId, currentUser);
+        ProposalDetailResponse response = proposalService.getProposalById(proposalId, currentUser);
         return ResponseEntity.ok(DocStoryResponseBody.success(response));
     }
     @Override

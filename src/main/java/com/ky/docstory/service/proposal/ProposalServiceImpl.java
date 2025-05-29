@@ -3,11 +3,14 @@ package com.ky.docstory.service.proposal;
 import com.ky.docstory.common.code.DocStoryResponseCode;
 import com.ky.docstory.common.exception.BusinessException;
 import com.ky.docstory.common.validator.ProposalMergeValidator;
+import com.ky.docstory.dto.file.FileResponse;
 import com.ky.docstory.dto.proposal.*;
+import com.ky.docstory.dto.user.UserResponse;
 import com.ky.docstory.entity.*;
 import com.ky.docstory.repository.HistoryRepository;
 import com.ky.docstory.repository.ProposalRepository;
 import com.ky.docstory.repository.RepositoryRepository;
+import com.ky.docstory.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +24,7 @@ public class ProposalServiceImpl implements ProposalService {
     private final ProposalRepository proposalRepository;
     private final HistoryRepository historyRepository;
     private final RepositoryRepository repositoryRepository;
+    private final UserService userService;
     private final ProposalMergeValidator validator;
 
 
@@ -44,11 +48,15 @@ public class ProposalServiceImpl implements ProposalService {
 
     @Override
     @Transactional(readOnly = true)
-    public ProposalResponse getProposalById(UUID proposalId, User currentUser) {
+    public ProposalDetailResponse getProposalById(UUID proposalId, User currentUser) {
         Proposal proposal = proposalRepository.findById(proposalId)
                 .orElseThrow(() -> new BusinessException(DocStoryResponseCode.NOT_FOUND));
 
-        return ProposalResponse.from(proposal);
+        UserResponse userResponse = userService.getUserInfo(proposal.getCreatedBy());
+
+        FileResponse fileResponse = FileResponse.from(proposal.getHistory().getFile());
+
+        return ProposalDetailResponse.from(proposal, userResponse, fileResponse);
     }
 
     @Override
