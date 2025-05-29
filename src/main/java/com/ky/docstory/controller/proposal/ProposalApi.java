@@ -47,7 +47,7 @@ public interface ProposalApi {
             @ApiResponse(responseCode = "404", description = "해당 Proposal이 존재하지 않습니다.",
                     content = @Content(schema = @Schema(implementation = NotFoundErrorResponseWrapper.class)))
     })
-    ResponseEntity<DocStoryResponseBody<ProposalResponse>> getProposalById(
+    ResponseEntity<DocStoryResponseBody<ProposalDetailResponse>> getProposalById(
             @Parameter(description = "Proposal ID", required = true) @PathVariable UUID proposalId,
             @Parameter(hidden = true) @CurrentUser User currentUser);
 
