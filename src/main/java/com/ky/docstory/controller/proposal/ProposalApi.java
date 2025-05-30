@@ -43,7 +43,7 @@ public interface ProposalApi {
     @Operation(summary = "Proposal 단건 조회", description = "Proposal ID로 단일 제안을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공",
-                    content = @Content(schema = @Schema(implementation = ProposalCreateResponseWrapper.class))),
+                    content = @Content(schema = @Schema(implementation = ProposalDetailResponseWrapper.class))),
             @ApiResponse(responseCode = "404", description = "해당 Proposal이 존재하지 않습니다.",
                     content = @Content(schema = @Schema(implementation = NotFoundErrorResponseWrapper.class)))
     })

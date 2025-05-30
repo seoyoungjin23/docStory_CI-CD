@@ -5,9 +5,10 @@ import com.ky.docstory.dto.user.UserResponse;
 import com.ky.docstory.entity.Proposal;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Schema(description = "Proposal 응답 DTO")
+@Schema(description = "Proposal 상세 응답 DTO")
 public record ProposalDetailResponse(
 
         @Schema(description = "Proposal ID", example = "d947891e-3c5e-4ae0-9d71-eee6f3f2c3a1")
@@ -18,6 +19,9 @@ public record ProposalDetailResponse(
 
         @Schema(description = "설명", example = "문서 내용에 오타가 있어 수정 제안합니다.")
         String description,
+
+        @Schema(description = "PP 생성 일자")
+        LocalDateTime createdAt,
 
         @Schema(description = "PP 생성자 정보")
         UserResponse createdBy,
@@ -31,6 +35,7 @@ public record ProposalDetailResponse(
                 proposal.getId(),
                 proposal.getTitle(),
                 proposal.getDescription(),
+                proposal.getCreatedAt(),
                 userResponse,
                 fileResponse
         );
