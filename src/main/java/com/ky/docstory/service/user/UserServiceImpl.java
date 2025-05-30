@@ -4,11 +4,14 @@ import com.ky.docstory.common.code.DocStoryResponseCode;
 import com.ky.docstory.common.exception.BusinessException;
 import com.ky.docstory.dto.user.ProfileImage;
 import com.ky.docstory.dto.user.UpdateUserRequest;
+import com.ky.docstory.dto.user.UserAuthorityResponse;
 import com.ky.docstory.dto.user.UserInvitationResponse;
 import com.ky.docstory.dto.user.UserResponse;
+import com.ky.docstory.entity.Team;
 import com.ky.docstory.entity.TeamInvite;
 import com.ky.docstory.entity.User;
 import com.ky.docstory.repository.TeamInviteRepository;
+import com.ky.docstory.repository.TeamRepository;
 import com.ky.docstory.repository.UserRepository;
 import io.awspring.cloud.s3.S3Template;
 import jakarta.transaction.Transactional;
@@ -30,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
+    private final TeamRepository teamRepository;
     private final TeamInviteRepository teamInviteRepository;
     private final S3Template s3Template;
 
@@ -91,6 +95,15 @@ public class UserServiceImpl implements UserService{
                 .map(UserInvitationResponse::from)
                 .toList();
     }
+
+    @Override
+    public UserAuthorityResponse getAuthorityInRepository(User currentUser, UUID repositoryId) {
+        Team team = teamRepository.findByRepositoryIdAndUserId(repositoryId, currentUser.getId())
+                .orElseThrow(() -> new BusinessException(DocStoryResponseCode.FORBIDDEN));
+
+        return UserAuthorityResponse.from(team);
+    }
+
 
     private User findUserByProviderId(String providerId) {
         return userRepository.findByProviderId(providerId)

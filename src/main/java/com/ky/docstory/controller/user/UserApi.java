@@ -3,12 +3,14 @@ package com.ky.docstory.controller.user;
 import com.ky.docstory.auth.CurrentUser;
 import com.ky.docstory.common.dto.DocStoryResponseBody;
 import com.ky.docstory.dto.user.UpdateUserRequest;
+import com.ky.docstory.dto.user.UserAuthorityResponse;
 import com.ky.docstory.dto.user.UserInvitationResponse;
 import com.ky.docstory.dto.user.UserResponse;
 import com.ky.docstory.entity.User;
 import com.ky.docstory.swagger.BadRequestErrorResponseWrapper;
 import com.ky.docstory.swagger.InternalServerErrorResponseWrapper;
 import com.ky.docstory.swagger.UnauthorizedErrorResponseWrapper;
+import com.ky.docstory.swagger.UserAuthorityResponseWrapper;
 import com.ky.docstory.swagger.UserInvitationResponseWrapper;
 import com.ky.docstory.swagger.UserLogoutResponseWrapper;
 import com.ky.docstory.swagger.UserResponseWrapper;
@@ -22,9 +24,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -128,5 +132,22 @@ public interface UserApi {
     ResponseEntity<DocStoryResponseBody<List<UserInvitationResponse>>> getMyInvitations(
             @Parameter(hidden = true)
             @CurrentUser User currentUser
+    );
+
+    @GetMapping("/me/repositories/{repositoryId}/authority")
+    @Operation(summary = "내 레포지토리 권한 조회", description = "현재 로그인한 사용자가 특정 레포지토리에서 가지는 권한을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "권한 조회 성공",
+                    content = @Content(schema = @Schema(implementation = UserAuthorityResponseWrapper.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청입니다.",
+                    content = @Content(schema = @Schema(implementation = BadRequestErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자입니다.",
+                    content = @Content(schema = @Schema(implementation = UnauthorizedErrorResponseWrapper.class))),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류가 발생했습니다.",
+                    content = @Content(schema = @Schema(implementation = InternalServerErrorResponseWrapper.class)))
+    })
+    ResponseEntity<DocStoryResponseBody<UserAuthorityResponse>> getMyAuthorityInRepository(
+            @Parameter(hidden = true) @CurrentUser User currentUser,
+            @Parameter(description = "레포지토리 ID", required = true) @PathVariable UUID repositoryId
     );
 }

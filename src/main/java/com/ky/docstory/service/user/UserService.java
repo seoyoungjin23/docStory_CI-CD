@@ -1,10 +1,12 @@
 package com.ky.docstory.service.user;
 
 import com.ky.docstory.dto.user.UpdateUserRequest;
+import com.ky.docstory.dto.user.UserAuthorityResponse;
 import com.ky.docstory.dto.user.UserInvitationResponse;
 import com.ky.docstory.dto.user.UserResponse;
 import com.ky.docstory.entity.User;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
@@ -13,4 +15,5 @@ public interface UserService {
     UserResponse updateUserInfo(User currentUser, UpdateUserRequest updateUserRequest, MultipartFile profileImage);
     void deleteUserInfo(User currentUser);
     List<UserInvitationResponse> getInvitations(User currentUser);
+    UserAuthorityResponse getAuthorityInRepository(User currentUser, UUID repositoryId);
 }
