@@ -22,4 +22,8 @@ public class Review extends BaseEntity {
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String comment;
+
+    public void updateComment(String comment) {
+        this.comment = comment;
+    }
 }
