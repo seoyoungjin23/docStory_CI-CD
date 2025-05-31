@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -23,7 +24,14 @@ public class Review extends BaseEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String comment;
 
+    @Column(name = "parent_id")
+    private UUID parentId;
+
     public void updateComment(String comment) {
         this.comment = comment;
+    }
+
+    public boolean isReply() {
+        return this.parentId != null;
     }
 }

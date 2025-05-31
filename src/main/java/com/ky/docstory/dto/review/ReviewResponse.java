@@ -4,6 +4,7 @@ import com.ky.docstory.dto.user.UserResponse;
 import com.ky.docstory.entity.Review;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Schema(description = "리뷰 응답 DTO")
@@ -24,7 +25,13 @@ public record ReviewResponse(
     LocalDateTime createdAt,
 
     @Schema(description = "수정일시")
-    LocalDateTime updatedAt
+    LocalDateTime updatedAt,
+
+    @Schema(description = "부모 댓글 ID (대댓글인 경우)")
+    UUID parentId,
+
+    @Schema(description = "대댓글 목록")
+    List<ReviewResponse> replies
 ) {
     public static ReviewResponse from(Review review, UserResponse reviewer) {
         return new ReviewResponse(
@@ -33,7 +40,24 @@ public record ReviewResponse(
             reviewer,
             review.getComment(),
             review.getCreatedAt(),
-            review.getUpdatedAt()
+            review.getUpdatedAt(),
+            review.getParentId(),
+            List.of()
+        );
+    }
+
+    public static ReviewResponse from(Review review, UserResponse reviewer, List<Review> replies) {
+        return new ReviewResponse(
+            review.getId(),
+            review.getProposal().getId(),
+            reviewer,
+            review.getComment(),
+            review.getCreatedAt(),
+            review.getUpdatedAt(),
+            review.getParentId(),
+            replies.stream()
+                .map(reply -> from(reply, reviewer))
+                .toList()
         );
     }
 } 

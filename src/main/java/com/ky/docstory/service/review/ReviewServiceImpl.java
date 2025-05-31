@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,10 +34,20 @@ public class ReviewServiceImpl implements ReviewService {
     public ReviewResponse createReview(UUID proposalId, ReviewCreateRequest request, User currentUser) {
         Proposal proposal = getProposalById(proposalId);
 
+        if (request.parentId() != null) {
+            Review parentReview = reviewRepository.findById(request.parentId())
+                    .orElseThrow(() -> new BusinessException(DocStoryResponseCode.NOT_FOUND));
+            
+            if (!parentReview.getProposal().getId().equals(proposalId)) {
+                throw new BusinessException(DocStoryResponseCode.NOT_FOUND);
+            }
+        }
+
         Review review = Review.builder()
                 .proposal(proposal)
                 .reviewer(currentUser)
                 .comment(request.comment())
+                .parentId(request.parentId())
                 .build();
 
         Review savedReview = reviewRepository.save(review);
@@ -49,11 +61,17 @@ public class ReviewServiceImpl implements ReviewService {
     public List<ReviewResponse> getReviewsByProposal(UUID proposalId, User currentUser) {
         Proposal proposal = getProposalById(proposalId);
 
-        List<Review> reviews = reviewRepository.findByProposal(proposal);
-        return reviews.stream()
+        List<Review> allReviews = reviewRepository.findByProposal(proposal);
+        Map<UUID, List<Review>> repliesByParentId = allReviews.stream()
+                .filter(Review::isReply)
+                .collect(Collectors.groupingBy(Review::getParentId));
+
+        return allReviews.stream()
+                .filter(review -> !review.isReply())
                 .map(review -> {
                     UserResponse userResponse = getUserResponse(review.getReviewer());
-                    return ReviewResponse.from(review, userResponse);
+                    List<Review> replies = repliesByParentId.getOrDefault(review.getId(), List.of());
+                    return ReviewResponse.from(review, userResponse, replies);
                 })
                 .toList();
     }
