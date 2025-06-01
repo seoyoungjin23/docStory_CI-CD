@@ -5,7 +5,6 @@ import com.ky.docstory.auth.CustomSuccessHandler;
 import com.ky.docstory.jwt.JWTFilter;
 import com.ky.docstory.jwt.JWTUtil;
 import com.ky.docstory.repository.UserRepository;
-import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -60,7 +59,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(redirectUri.split(",")));
+        configuration.setAllowedOrigins(List.of(redirectUri));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(List.of("Content-Type", "Authorization"));
